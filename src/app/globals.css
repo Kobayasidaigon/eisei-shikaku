@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   設備資格ドリル — デザイントークン
+   方針: AIデフォルト顔(紫グラデ/影/角丸2xl/絵文字/font-black)を一切使わない。
+   生成りの紙・明朝の設問・罫線で組む・差し色は琥珀1色、に振り切る。
+   ========================================================================= */
+@theme {
+  --color-paper: #f4f0e8; /* 生成りの背景。純白を使わない */
+  --color-surface: #fffdf9; /* カード面。ほんのり温かい白 */
+  --color-ink: #211f1b; /* 純黒でない濃インク */
+  --color-ink-soft: #6b665c;
+  --color-ink-faint: #9c968a;
+
+  --color-line: #e3ded1; /* 影の代わりに使う基本の罫線 */
+  --color-line-strong: #cdc6b5;
+
+  --color-accent: #b1670f; /* 差し色＝琥珀。これ一色だけ */
+  --color-accent-ink: #874c09;
+  --color-accent-wash: #f3e7d1;
+
+  --color-correct: #2f6b46; /* 抑えた森の緑 */
+  --color-correct-wash: #e8efe6;
+  --color-wrong: #a23a28; /* 抑えた煉瓦 */
+  --color-wrong-wash: #f2e4de;
+
+  /* 実フォントは next/font(layout.tsx)がセルフホストし CSS変数で注入する */
+  --font-serif: var(--font-shippori), "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-sans: var(--font-zenkaku), -apple-system, "Hiragino Kaku Gothic ProN",
+    sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-paper); /* グラデーション無し。フラットな生成り */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-accent-wash);
+  color: var(--color-accent-ink);
+}
+
+/* 数値・割合は途中で折り返さない */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 小さなラベル用のレタースペース(英字の資格コード等) */
+.tracked {
+  letter-spacing: 0.14em;
+}
+
+/* 画面切替の控えめなフェード。大げさな動きはしない */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-up {
+  animation: fadeUp 0.24s ease-out both;
+}
