@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { COLUMNS, columnBySlug, columnDates, type Column } from "@/data/columns";
-import { categoriesOfCert, certById, categoryName, questionsOf, questionsOfCert, QUESTIONS } from "@/data/questions";
+import { categoriesOfCert, certById, categoryName, homeCertOfCategory, questionsOf, questionsOfCert, QUESTIONS } from "@/data/questions";
 import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
@@ -43,7 +43,8 @@ export async function generateMetadata({
 // certId 直接一致 → slug 内の資格トークン一致(比較記事など) → 同一 kicker の順。
 // slug と certId が一致しないことがある場合に備え、certId ごとの slug トークン表で照合する。
 const CERT_TOKENS: Record<string, string[]> = {
-  eisei2: ["eisei2", "eisei", "eiseikanri", "eisei-kanri"],
+  eisei2: ["eisei2", "eiseikanri", "eisei-kanri"],
+  eisei1: ["eisei1"],
 };
 
 function relatedColumns(current: Column): Column[] {
@@ -201,7 +202,13 @@ export default async function ColumnArticle({
               : `全${QUESTIONS.length}問の対策演習を無料で用意。気になる資格を本番形式で力試しできます。`}
         </p>
         <Link
-          href={cert ? `/${c.certId}/` : drill ? `/${drill.certId}/${drill.categoryId}/` : "/"}
+          href={
+            cert
+              ? `/${c.certId}/`
+              : drill
+                ? `/${homeCertOfCategory(drill.categoryId)}/${drill.categoryId}/`
+                : "/"
+          }
           className="inline-block mt-4 rounded-[8px] bg-accent text-white text-[14px] font-medium px-5 py-2.5 transition hover:bg-accent-ink"
         >
           {cert
@@ -218,12 +225,17 @@ export default async function ColumnArticle({
           <div className="text-[11px] tracked text-ink-faint mb-2.5">{cert.name} の分野別一問一答</div>
           <ul className="flex flex-wrap gap-2">
             {categoriesOfCert(cert)
-              .map((cat) => ({ ...cat, count: questionsOf(cert.id, cat.id).length }))
+              .map((cat) => ({
+                ...cat,
+                count: questionsOf(cert.id, cat.id).length,
+                // 共通科目のURLは所有者(第二種)側にしか存在しない
+                href: `/${homeCertOfCategory(cat.id)}/${cat.id}/`,
+              }))
               .filter((cat) => cat.count > 0)
               .map((cat) => (
                 <li key={cat.id}>
                   <Link
-                    href={`/${cert.id}/${cat.id}/`}
+                    href={cat.href}
                     className="inline-block rounded-[8px] border border-line bg-surface px-3 py-1.5 text-[12px] text-ink-soft no-underline transition hover:border-accent"
                   >
                     {cat.name}(全{cat.count}問)

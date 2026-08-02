@@ -11,6 +11,8 @@ import {
   certById,
   categoriesOfCert,
   categoryName,
+  homeCertOfCategory,
+  ownedCategoriesOfCert,
   questionsOf,
   QUESTIONS_UPDATED_AT,
   type CertId,
@@ -19,9 +21,12 @@ import {
 
 // 分野ごとの「一問一答」ページ。全問題・正解・解説を静的HTMLとして出力する。
 // クイズUI(クライアント描画)の中にしか存在しなかった問題文をクローラに読める形にする。
+//
+// 共通科目(第一種・第二種で同一の3科目)は、URL所有者の試験でのみ生成する
+// (ownedCategoriesOfCert)。両方で生成すると同じ問題が2つのURLに出て重複コンテンツになる。
 export function generateStaticParams() {
   return CERTS.flatMap((cert) =>
-    categoriesOfCert(cert)
+    ownedCategoriesOfCert(cert)
       .filter((cat) => questionsOf(cert.id, cat.id).length > 0)
       .map((cat) => ({ certId: cert.id, categoryId: cat.id }))
   );
@@ -69,9 +74,14 @@ export default async function CategoryPage({
   const catName = categoryName(categoryId as CategoryId);
   const url = absUrl(`/${cert.id}/${categoryId}/`);
   const letters = ["a", "b", "c", "d"];
+  // 他分野へのリンクは、その分野のURL所有者(共通科目なら第二種)へ向ける
   const otherCats = categoriesOfCert(cert)
     .filter((c) => c.id !== categoryId && questionsOf(cert.id, c.id).length > 0)
-    .map((c) => ({ ...c, count: questionsOf(cert.id, c.id).length }));
+    .map((c) => ({
+      ...c,
+      count: questionsOf(cert.id, c.id).length,
+      href: `/${homeCertOfCategory(c.id)}/${c.id}/`,
+    }));
   // 記事(最大の本文ページ)→ 対応する資格コラムへの逆リンクで topic cluster を閉じる
   const relatedColumns = COLUMNS.filter((c) => c.certId === cert.id);
 
@@ -215,7 +225,7 @@ export default async function CategoryPage({
             {otherCats.map((c) => (
               <li key={c.id}>
                 <Link
-                  href={`/${cert.id}/${c.id}/`}
+                  href={c.href}
                   className="inline-block rounded-[8px] border border-line bg-surface px-3 py-1.5 text-[12px] text-ink-soft no-underline transition hover:border-accent"
                 >
                   {c.name}(全{c.count}問)

@@ -9,8 +9,8 @@ import { topicOf } from "@/data/topics";
 import {
   CERTS,
   certById,
-  categoriesOfCert,
   categoryName,
+  ownedCategoriesOfCert,
   questionsOf,
   QUESTIONS_UPDATED_AT,
   type CertId,
@@ -19,9 +19,11 @@ import {
 
 // 1問1ページ。分野ページ(全問一覧)に対して「論点タイトルを持つ個別の受け皿」を作り、
 // 問題文そのものを検索する受験者と論点名のロングテールを拾う(本体シカクモンで実証済みの構成)。
+//
+// 分野ページと同じく、共通科目はURL所有者の試験でのみ生成する(重複コンテンツ防止)。
 export function generateStaticParams() {
   return CERTS.flatMap((cert) =>
-    categoriesOfCert(cert).flatMap((cat) =>
+    ownedCategoriesOfCert(cert).flatMap((cat) =>
       questionsOf(cert.id, cat.id).map((q) => ({
         certId: cert.id,
         categoryId: cat.id,

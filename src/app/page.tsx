@@ -30,7 +30,7 @@ export default function Home() {
       name: `${SITE.tagline}｜${SITE.name}`,
       inLanguage: "ja",
       isPartOf: { "@id": absUrl("/#website") },
-      about: { "@type": "Thing", name: "第二種衛生管理者(労働衛生・関係法令・労働生理)の練習問題" },
+      about: { "@type": "Thing", name: "第一種・第二種衛生管理者(関係法令・労働衛生・労働生理)の練習問題" },
       publisher: { "@id": absUrl("/#organization") },
       mainEntity: {
         "@type": "ItemList",
@@ -50,8 +50,8 @@ export default function Home() {
       <JsonLd data={jsonLd} />
       <QuizApp counts={quizCountsFor("eisei2")} />
       <p className="mt-8 text-[12px] text-ink-soft leading-relaxed">
-        第二種衛生管理者試験の関係法令・労働衛生・労働生理(いずれも有害業務以外)の3科目を、
-        全{QUESTIONS.length}問すべて無料で公開しています。分野別の一問一答から本番形式・模擬試験まで、
+        第一種・第二種衛生管理者に対応。共通3科目(関係法令・労働衛生・労働生理／いずれも有害業務以外)に、
+        第一種の有害業務2科目を加えた全{QUESTIONS.length}問を無料で公開しています。分野別の一問一答から本番形式・模擬試験まで、
         アプリのインストール不要でスマホのブラウザでそのまま演習でき、受験履歴はこの端末内にだけ保存されます。
       </p>
       {guides.length > 0 && (

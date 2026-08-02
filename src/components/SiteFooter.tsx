@@ -34,7 +34,7 @@ export default function SiteFooter() {
           </Link>
         </div>
         <p className="mt-3 text-ink-faint leading-relaxed">
-          ※ 本サイトは第二種衛生管理者試験の学習に向けた対策演習問題です。試験の公式問題ではありません。
+          ※ 本サイトは第一種・第二種衛生管理者試験の学習に向けた対策演習問題です。試験の公式問題ではありません。
           内容は公式の出題範囲と一般的な労働衛生の知識にもとづき作成していますが、最新の法令・公式テキストもあわせてご確認ください。
         </p>
         <div className="mt-4 pt-3 border-t border-line flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-faint">

@@ -62,4 +62,42 @@ export const MOSHI: Partial<Record<CertId, MoshiDef>> = {
       "eisei2-seiri-13", "eisei2-seiri-24", "eisei2-seiri-29", "eisei2-seiri-41", "eisei2-seiri-47",
     ],
   },
+  eisei1: {
+    round: 1,
+    timeLimitMin: 180,
+    passCount: 27,
+    passLabel: "総得点60%(44問中27問)以上、かつ各科目40%以上",
+    isFullSpec: true,
+    choiceLabel: "4択(本試験は五肢択一)",
+    specNote:
+      "本試験(第一種衛生管理者)は、関係法令(有害業務に係るもの)10問・労働衛生(有害業務に係るもの)10問・関係法令(有害業務以外)7問・労働衛生(有害業務以外)7問・労働生理10問の計44問、試験時間3時間、五肢択一で、合格基準は各科目40%以上かつ総得点60%以上です。本模試も同一の科目構成・問題数・出題順・合格基準で構成しています(選択肢は演習しやすい4択の簡略形式で、実際の試験は五肢択一です)。試験時間・基準は制度改正で変わる場合があるため、最新情報は公式でご確認ください。",
+    sections: [
+      { label: "関係法令(有害業務に係るもの)", start: 0, count: 10, passCount: 4 },
+      { label: "労働衛生(有害業務に係るもの)", start: 10, count: 10, passCount: 4 },
+      { label: "関係法令(有害業務以外)", start: 20, count: 7, passCount: 3 },
+      { label: "労働衛生(有害業務以外)", start: 27, count: 7, passCount: 3 },
+      { label: "労働生理", start: 34, count: 10, passCount: 4 },
+    ],
+    // 本試験の科目出題順どおりに並べる(科目別判定の start/count が紙面位置に対応)。
+    // 共通3科目は第二種模試と重ならない問題を優先し、続けて受験しても復習にならないようにした。
+    questionIds: [
+      // 関係法令(有害業務に係るもの) 10問
+      "eisei1-hourei-yugai-01", "eisei1-hourei-yugai-03", "eisei1-hourei-yugai-06", "eisei1-hourei-yugai-08",
+      "eisei1-hourei-yugai-11", "eisei1-hourei-yugai-15", "eisei1-hourei-yugai-19", "eisei1-hourei-yugai-24",
+      "eisei1-hourei-yugai-33", "eisei1-hourei-yugai-39",
+      // 労働衛生(有害業務に係るもの) 10問
+      "eisei1-eisei-yugai-01", "eisei1-eisei-yugai-04", "eisei1-eisei-yugai-08", "eisei1-eisei-yugai-13",
+      "eisei1-eisei-yugai-17", "eisei1-eisei-yugai-20", "eisei1-eisei-yugai-25", "eisei1-eisei-yugai-28",
+      "eisei1-eisei-yugai-33", "eisei1-eisei-yugai-40",
+      // 関係法令(有害業務以外) 7問
+      "eisei2-hourei-03", "eisei2-hourei-07", "eisei2-hourei-19", "eisei2-hourei-25",
+      "eisei2-hourei-34", "eisei2-hourei-41", "eisei2-hourei-46",
+      // 労働衛生(有害業務以外) 7問
+      "eisei2-eisei-04", "eisei2-eisei-09", "eisei2-eisei-14", "eisei2-eisei-23",
+      "eisei2-eisei-30", "eisei2-eisei-37", "eisei2-eisei-43",
+      // 労働生理 10問
+      "eisei2-seiri-04", "eisei2-seiri-08", "eisei2-seiri-14", "eisei2-seiri-17", "eisei2-seiri-21",
+      "eisei2-seiri-26", "eisei2-seiri-33", "eisei2-seiri-38", "eisei2-seiri-44", "eisei2-seiri-50",
+    ],
+  },
 };

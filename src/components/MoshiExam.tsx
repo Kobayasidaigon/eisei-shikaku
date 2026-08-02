@@ -14,7 +14,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CATEGORIES, CERTS, type CertId, type Question } from "@/data/certs";
+import {
+  CATEGORIES,
+  CERTS,
+  homeCertOfCategory,
+  type CategoryId,
+  type CertId,
+  type Question,
+} from "@/data/certs";
 import { loadCertQuestions } from "@/data/question-loader";
 import { MOSHI } from "@/data/moshi";
 import { EXTRA5 } from "@/data/moshi-extra5";
@@ -493,7 +500,11 @@ export default function MoshiExam({ certId }: { certId: CertId }) {
         {weakest && (
           <p className="text-[13px] text-ink-soft leading-relaxed mt-4 pt-3 border-t border-line">
             いちばんの弱点は「{catName(weakest[0])}」({weakest[1].correct}/{weakest[1].total}正解)。
-            <Link href={`/${certId}/${weakest[0]}/`} className="underline underline-offset-2 hover:text-ink">
+            {/* 共通科目の分野ページは所有者(第二種)側のURLにしか存在しないため解決してからリンクする */}
+            <Link
+              href={`/${homeCertOfCategory(weakest[0] as CategoryId)}/${weakest[0]}/`}
+              className="underline underline-offset-2 hover:text-ink"
+            >
               この分野の一問一答で復習する →
             </Link>
           </p>

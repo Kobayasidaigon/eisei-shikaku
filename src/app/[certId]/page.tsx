@@ -11,6 +11,7 @@ import {
   CERTS,
   certById,
   categoriesOfCert,
+  homeCertOfCategory,
   questionsOf,
   questionsOfCert,
   quizCountsFor,
@@ -18,9 +19,9 @@ import {
   type CertId,
 } from "@/data/questions";
 
-// 関連資格クラスタ(第一種衛生管理者などを追加したら相互リンクの説明文を出す資格)。
-// 現状は第二種衛生管理者の1資格のみのため空。
-const BILMEN_MEMBERS: CertId[] = [];
+// 関連資格クラスタ。第一種・第二種は3科目が共通で受験者が比較検討するため、
+// 本文にクラスタ語を供給して相互リンクさせる。
+const RELATED_CLUSTER: CertId[] = ["eisei1", "eisei2"];
 
 // 資格名×演習系クエリ(「第二種衛生管理者 練習問題/過去問」等)の受け皿となるSEO入口ページ。
 // 問題データのある資格ぶんを静的生成する。
@@ -61,13 +62,21 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
   if (!cert) notFound();
 
   const total = questionsOfCert(cert.id).length;
+  // 分野ページのURLは所有者の試験に固定する(共通科目は第二種側が正準URL)。
+  // 第一種のページからは第二種のURLへリンクし、重複コンテンツを作らない。
   const cats = categoriesOfCert(cert)
-    .map((c) => ({ ...c, count: questionsOf(cert.id, c.id).length }))
+    .map((c) => ({
+      ...c,
+      count: questionsOf(cert.id, c.id).length,
+      href: `/${homeCertOfCategory(c.id)}/${c.id}/`,
+      shared: homeCertOfCategory(c.id) !== cert.id,
+    }))
     .filter((c) => c.count > 0);
+  const hasSharedCats = cats.some((c) => c.shared);
   const relatedColumns = COLUMNS.filter((c) => c.certId === cert.id);
   // 関連資格への文脈内相互リンク(第一種衛生管理者などを追加したら表示される)
   const siblingCerts = CERTS.filter((c) => c.id !== cert.id && questionsOfCert(c.id).length > 0);
-  const isBilmen = BILMEN_MEMBERS.includes(cert.id);
+  const isClusterMember = RELATED_CLUSTER.includes(cert.id);
   const url = absUrl(`/${cert.id}/`);
   const credential = {
     "@type": "EducationalOccupationalCredential",
@@ -189,19 +198,21 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
         </div>
         <p className="text-[12px] text-ink-soft mb-3.5 leading-relaxed">
           出題形式ではなく、問題・正解・解説をまとめて読みたい方はこちら。分野ごとに全問を掲載しています。
+          {hasSharedCats &&
+            "有害業務以外の3科目は第一種・第二種で共通のため、第二種のページにまとめて掲載しています(内容は同じです)。"}
         </p>
         <ul className="grid sm:grid-cols-2 gap-2.5">
           {cats.map((c) => (
             <li key={c.id}>
               <Link
-                href={`/${cert.id}/${c.id}/`}
+                href={c.href}
                 className="block rounded-[10px] border border-line bg-surface p-4 transition hover:border-accent no-underline"
               >
                 <span className="block text-[14px] font-medium text-ink">
-                  {cert.name}「{c.name}」一問一答
+                  {c.shared ? "" : `${cert.name}`}「{c.name}」一問一答
                 </span>
                 <span className="block text-[11px] text-ink-soft mt-1">
-                  {c.desc}(全{c.count}問)
+                  {c.desc}(全{c.count}問{c.shared ? "・第一種と第二種で共通" : ""})
                 </span>
               </Link>
             </li>
@@ -234,9 +245,11 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
               関連する資格
             </h2>
           </div>
-          {isBilmen && (
+          {isClusterMember && (
             <p className="text-[12px] text-ink-soft mb-3 leading-relaxed">
-              関連する衛生管理者資格をまとめて無料で対策できます。
+              第一種衛生管理者はすべての業種で選任でき、第二種は有害業務との関連が少ない業種に限られます。
+              試験科目は「関係法令(有害業務以外)・労働衛生(有害業務以外)・労働生理」の3科目が共通で、
+              第一種はこれに有害業務に係る2科目が加わります。本サイトではどちらも無料で対策できます。
             </p>
           )}
           <ul className="flex flex-wrap gap-2">

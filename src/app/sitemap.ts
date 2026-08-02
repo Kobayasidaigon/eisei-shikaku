@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/data/site";
 import { COLUMNS, columnDates } from "@/data/columns";
-import { CERTS, QUESTIONS_UPDATED_AT, categoriesOfCert, questionsOf, questionsOfCert } from "@/data/questions";
+import { CERTS, QUESTIONS_UPDATED_AT, ownedCategoriesOfCert, questionsOf, questionsOfCert } from "@/data/questions";
 import { MOSHI, MOSHI_UPDATED_AT } from "@/data/moshi";
 
 export const dynamic = "force-static";
@@ -43,7 +43,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.8,
       });
     }
-    for (const cat of categoriesOfCert(cert)) {
+    // 共通科目はURL所有者の試験でのみ出力する(静的生成と一致させ、重複URLを載せない)
+    for (const cat of ownedCategoriesOfCert(cert)) {
       const qs = questionsOf(cert.id, cat.id);
       if (qs.length === 0) continue;
       entries.push({

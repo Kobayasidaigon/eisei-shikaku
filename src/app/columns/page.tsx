@@ -8,7 +8,7 @@ import JsonLd from "@/components/JsonLd";
 // タイトルのブランド名は layout の title.template が付与する
 const PAGE_TITLE = "資格コラム";
 const PAGE_DESC =
-  "第二種衛生管理者の概要・難易度・受験資格・勉強法と、このドリルでの対策をまとめた資格ガイドコラム。";
+  "第一種・第二種衛生管理者の概要・難易度・受験資格・勉強法と、このドリルでの対策をまとめた資格ガイドコラム。";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,

@@ -5,22 +5,27 @@
 // questions.ts を import すると全問データがバンドルに入ってしまう。
 // 問題データは question-loader.ts の動的 import で資格ごとに取得する。
 //
-// 現状は第二種衛生管理者(有害業務以外の3科目)の1資格。第一種衛生管理者は
-// 有害業務に係る関係法令・労働衛生の問題プールが揃い次第、CERTS / CategoryId に
-// 追加する(第二種の3科目=第一種と共通の中核科目)。
+// 【重要】第一種と第二種は3科目(関係法令・労働衛生の有害業務以外、労働生理)が共通。
+//   そのため「問題は分野(CategoryId)に属し、試験(Cert)は分野の集合を持つ」という
+//   モデルにしている。共通科目の問題は両試験のドリル・模試に出るが、
+//   URL(分野ページ・1問1ページ)は重複コンテンツを避けるため所有者を1つに固定する
+//   (homeCertOfCategory)。第一種のページからは第二種のURLへリンクする。
 // =============================================================================
 
-export type CertId = "eisei2";
+export type CertId = "eisei2" | "eisei1";
 
 export type CategoryId =
-  // 第二種衛生管理者の3科目(いずれも有害業務に係るもの以外)
+  // 第一種のみの2科目(有害業務に係るもの)
+  | "e1-hourei-yugai"
+  | "e1-eisei-yugai"
+  // 第一種・第二種で共通の3科目(有害業務以外)
   | "e2-hourei"
   | "e2-eisei"
   | "e2-seiri";
 
 export type Question = {
   id: string;
-  cert?: CertId; // 未指定は eisei2 で補完
+  cert?: CertId; // 未指定は分野の接頭辞から補完(= その分野のURL所有者)
   category: CategoryId;
   q: string;
   // データ上は常に4択。五肢択一の本試験に対する簡略形式(1論点1問で演習しやすくする)。
@@ -36,22 +41,32 @@ export type Category = {
   desc: string;
 };
 
-// 知識領域のマスター(第二種衛生管理者 試験の出題範囲に対応)
+// 知識領域のマスター(衛生管理者試験の出題範囲に対応)
 export const CATEGORIES: Category[] = [
+  {
+    id: "e1-hourei-yugai",
+    name: "関係法令（有害業務に係るもの）",
+    desc: "作業主任者・作業環境測定・特殊健康診断・特別教育・譲渡制限・有機則/特化則/酸欠則",
+  },
+  {
+    id: "e1-eisei-yugai",
+    name: "労働衛生（有害業務に係るもの）",
+    desc: "化学物質の状態・粉じん/有機溶剤/金属/ガスによる健康障害・局所排気装置・保護具",
+  },
   {
     id: "e2-hourei",
     name: "関係法令（有害業務以外）",
-    desc: "安全衛生管理体制・衛生委員会・健康診断・労働基準法(労働時間・休憩・年休・母性保護)",
+    desc: "安全衛生管理体制・衛生委員会・健康診断・事務所衛生基準・労働基準法",
   },
   {
     id: "e2-eisei",
     name: "労働衛生（有害業務以外）",
-    desc: "温熱環境・換気・照明・情報機器作業・食中毒・救急処置・メンタルヘルス・腰痛予防",
+    desc: "温熱環境・換気・照明・情報機器作業・食中毒・救急処置・メンタルヘルス・統計",
   },
   {
     id: "e2-seiri",
     name: "労働生理",
-    desc: "循環器・呼吸・血液・消化と代謝・腎臓・神経・感覚・体温調節・睡眠",
+    desc: "循環器・呼吸・血液・消化と代謝・腎臓・神経・内分泌・感覚・体温調節・睡眠",
   },
 ];
 
@@ -60,7 +75,7 @@ export type Cert = {
   name: string;
   fullName: string;
   desc: string;
-  categories: CategoryId[]; // この試験で出題する知識領域(表示順)
+  categories: CategoryId[]; // この試験で出題する知識領域(本試験の出題順)
   passLine: number; // 合格ライン(%)
   examCount: number; // 本番形式モードの出題数(本試験の問題数の目安)
   aliases?: string[]; // 別名・略称。title・本文の別表記クエリ対応に使う
@@ -98,6 +113,35 @@ export const CERTS: Cert[] = [
       },
     ],
   },
+  {
+    id: "eisei1",
+    name: "第一種衛生管理者",
+    fullName: "第一種衛生管理者",
+    desc: "すべての業種で選任できる衛生管理者の資格。製造業・建設業・医療業など有害業務を含む業種でも選任できます。第二種と共通の3科目に、有害業務に係る関係法令・労働衛生の2科目を加えた計5科目を、解説つき4択で無料演習できます。",
+    categories: ["e1-hourei-yugai", "e1-eisei-yugai", "e2-hourei", "e2-eisei", "e2-seiri"],
+    passLine: 60,
+    examCount: 44,
+    aliases: ["第1種衛生管理者", "衛生管理者1種", "一種衛生管理者"],
+    authority: "公益財団法人 安全衛生技術試験協会",
+    faq: [
+      {
+        q: "第一種衛生管理者と第二種衛生管理者の違いは何ですか？",
+        a: "第一種はすべての業種で衛生管理者として選任できます。第二種は有害業務との関連が少ない業種に限られ、農林畜水産業・鉱業・建設業・製造業・電気業・ガス業・水道業・熱供給業・運送業・自動車整備業・機械修理業・医療業・清掃業では選任できません。試験も第一種は有害業務に係る2科目が加わり計44問となります。",
+      },
+      {
+        q: "第一種衛生管理者の試験科目と合格基準は？",
+        a: "関係法令(有害業務に係るもの)10問・労働衛生(有害業務に係るもの)10問・関係法令(有害業務以外)7問・労働衛生(有害業務以外)7問・労働生理10問の計44問(五肢択一)で、試験時間は3時間です。合格には各科目40%以上かつ全科目合計60%以上の得点が必要です。",
+      },
+      {
+        q: "第一種衛生管理者の難易度・合格率は？",
+        a: "合格率は近年おおむね4割前後で推移しており(年度により変動します)、第二種(5割前後)よりやや難しい傾向です。差がつくのは有害業務に係る2科目で、作業主任者の選任や作業環境測定の頻度、化学物質による健康障害など、日常業務でなじみの薄い暗記事項が中心となります。",
+      },
+      {
+        q: "第二種に合格してから第一種を受けたほうがよいですか？",
+        a: "第二種の合格は第一種の受験要件ではないため、最初から第一種を受験できます。3科目は共通なので、第二種に合格済みの方は有害業務の2科目を追加で学習すれば対応できます。将来的に製造業や医療業に関わる可能性があるなら、はじめから第一種を狙うほうが結果的に近道です。",
+      },
+    ],
+  },
 ];
 
 // サーバー側(ページ)で計算して QuizApp に渡す問題数(SSR時点の表示とカード描画に使う)
@@ -106,11 +150,18 @@ export type QuizCounts = {
   activeCat: Partial<Record<CategoryId, number>>; // 初期表示資格の分野別問題数
 };
 
-// 各問に cert を補完(現状は全カテゴリが第二種衛生管理者)。
-// 第一種を追加するときは category の接頭辞で分岐する。
+/**
+ * 分野ページ・1問1ページのURLを所有する試験(正準URLの持ち主)。
+ * 共通科目(e2-*)は第二種が所有し、第一種のページからはそちらへリンクする。
+ * こうしないと同じ問題が2つのURLで生成され、重複コンテンツになる。
+ */
+export function homeCertOfCategory(categoryId: CategoryId): CertId {
+  return categoryId.startsWith("e1-") ? "eisei1" : "eisei2";
+}
+
+// 各問に cert(=その分野のURL所有者)を補完する
 export function stampCert(q: Question): Question {
-  const cert: CertId = q.cert ?? "eisei2";
-  return { ...q, cert };
+  return { ...q, cert: q.cert ?? homeCertOfCategory(q.category) };
 }
 
 export function certById(certId: CertId): Cert | undefined {
@@ -125,4 +176,13 @@ export function categoriesOfCert(cert: Cert): Category[] {
   return cert.categories
     .map((id) => CATEGORIES.find((c) => c.id === id))
     .filter((c): c is Category => Boolean(c));
+}
+
+/**
+ * この試験がURLを所有する分野だけを返す。
+ * 静的生成(分野ページ・1問1ページ・sitemap)は必ずこれを使い、
+ * 共通科目が両試験のURLで二重に出力されるのを防ぐ。
+ */
+export function ownedCategoriesOfCert(cert: Cert): Category[] {
+  return categoriesOfCert(cert).filter((c) => homeCertOfCategory(c.id) === cert.id);
 }
