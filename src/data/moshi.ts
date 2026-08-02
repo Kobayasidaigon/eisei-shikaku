@@ -48,18 +48,19 @@ export const MOSHI: Partial<Record<CertId, MoshiDef>> = {
       { label: "労働衛生(有害業務以外)", start: 10, count: 10, passCount: 4 },
       { label: "労働生理", start: 20, count: 10, passCount: 4 },
     ],
-    // 各科目の問題プール(50問)から論点が偏らないよう10問ずつ抽出。
-    // 固定ペーパーは選択肢をシャッフルしないため、正解位置が0〜3に散る組合せを選ぶこと。
+    // 各科目の問題プールから論点が偏らないよう10問ずつ抽出。
+    // 固定ペーパーは選択肢をシャッフルしないため、正解位置が0〜3に均等に散り、
+    // かつ同じ位置が3問以上連続しない並びにしてある(本試験の紙面に近づけるため)。
     questionIds: [
       // 関係法令(有害業務以外) 10問 — 管理体制・健康診断・事務所則・労基法をバランスよく
       "eisei2-hourei-01", "eisei2-hourei-02", "eisei2-hourei-05", "eisei2-hourei-10", "eisei2-hourei-13",
-      "eisei2-hourei-17", "eisei2-hourei-21", "eisei2-hourei-30", "eisei2-hourei-40", "eisei2-hourei-43",
+      "eisei2-hourei-17", "eisei2-hourei-21", "eisei2-hourei-12", "eisei2-hourei-07", "eisei2-hourei-09",
       // 労働衛生(有害業務以外) 10問 — 温熱・換気・照明・食中毒・統計・救急・作業管理
       "eisei2-eisei-01", "eisei2-eisei-02", "eisei2-eisei-06", "eisei2-eisei-11", "eisei2-eisei-13",
-      "eisei2-eisei-17", "eisei2-eisei-22", "eisei2-eisei-28", "eisei2-eisei-41", "eisei2-eisei-48",
+      "eisei2-eisei-05", "eisei2-eisei-28", "eisei2-eisei-22", "eisei2-eisei-03", "eisei2-eisei-48",
       // 労働生理 10問 — 循環・呼吸・血液・消化・腎臓・神経・感覚・体温
       "eisei2-seiri-01", "eisei2-seiri-03", "eisei2-seiri-07", "eisei2-seiri-09", "eisei2-seiri-12",
-      "eisei2-seiri-13", "eisei2-seiri-24", "eisei2-seiri-29", "eisei2-seiri-41", "eisei2-seiri-47",
+      "eisei2-seiri-13", "eisei2-seiri-24", "eisei2-seiri-15", "eisei2-seiri-41", "eisei2-seiri-47",
     ],
   },
   eisei1: {
@@ -79,25 +80,26 @@ export const MOSHI: Partial<Record<CertId, MoshiDef>> = {
       { label: "労働生理", start: 34, count: 10, passCount: 4 },
     ],
     // 本試験の科目出題順どおりに並べる(科目別判定の start/count が紙面位置に対応)。
-    // 共通3科目は第二種模試と重ならない問題を優先し、続けて受験しても復習にならないようにした。
+    // 共通3科目は第二種模試と重ならない問題を選び、続けて受験しても復習にならないようにした。
+    // 正解位置は科目ごとに0〜3へ均等に散らし、同じ位置が続かない並びにしてある。
     questionIds: [
       // 関係法令(有害業務に係るもの) 10問
-      "eisei1-hourei-yugai-01", "eisei1-hourei-yugai-03", "eisei1-hourei-yugai-06", "eisei1-hourei-yugai-08",
-      "eisei1-hourei-yugai-11", "eisei1-hourei-yugai-15", "eisei1-hourei-yugai-19", "eisei1-hourei-yugai-24",
-      "eisei1-hourei-yugai-33", "eisei1-hourei-yugai-39",
+      "eisei1-hourei-yugai-01", "eisei1-hourei-yugai-03", "eisei1-hourei-yugai-16", "eisei1-hourei-yugai-06",
+      "eisei1-hourei-yugai-04", "eisei1-hourei-yugai-09", "eisei1-hourei-yugai-19", "eisei1-hourei-yugai-07",
+      "eisei1-hourei-yugai-05", "eisei1-hourei-yugai-02",
       // 労働衛生(有害業務に係るもの) 10問
-      "eisei1-eisei-yugai-01", "eisei1-eisei-yugai-04", "eisei1-eisei-yugai-08", "eisei1-eisei-yugai-13",
-      "eisei1-eisei-yugai-17", "eisei1-eisei-yugai-20", "eisei1-eisei-yugai-25", "eisei1-eisei-yugai-28",
-      "eisei1-eisei-yugai-33", "eisei1-eisei-yugai-40",
+      "eisei1-eisei-yugai-01", "eisei1-eisei-yugai-04", "eisei1-eisei-yugai-13", "eisei1-eisei-yugai-08",
+      "eisei1-eisei-yugai-17", "eisei1-eisei-yugai-11", "eisei1-eisei-yugai-25", "eisei1-eisei-yugai-10",
+      "eisei1-eisei-yugai-33", "eisei1-eisei-yugai-12",
       // 関係法令(有害業務以外) 7問
-      "eisei2-hourei-03", "eisei2-hourei-07", "eisei2-hourei-19", "eisei2-hourei-25",
-      "eisei2-hourei-34", "eisei2-hourei-41", "eisei2-hourei-46",
+      "eisei2-hourei-03", "eisei2-hourei-14", "eisei2-hourei-19", "eisei2-hourei-25",
+      "eisei2-hourei-41", "eisei2-hourei-34", "eisei2-hourei-22",
       // 労働衛生(有害業務以外) 7問
-      "eisei2-eisei-04", "eisei2-eisei-09", "eisei2-eisei-14", "eisei2-eisei-23",
-      "eisei2-eisei-30", "eisei2-eisei-37", "eisei2-eisei-43",
+      "eisei2-eisei-04", "eisei2-eisei-14", "eisei2-eisei-09", "eisei2-eisei-23",
+      "eisei2-eisei-30", "eisei2-eisei-37", "eisei2-eisei-15",
       // 労働生理 10問
-      "eisei2-seiri-04", "eisei2-seiri-08", "eisei2-seiri-14", "eisei2-seiri-17", "eisei2-seiri-21",
-      "eisei2-seiri-26", "eisei2-seiri-33", "eisei2-seiri-38", "eisei2-seiri-44", "eisei2-seiri-50",
+      "eisei2-seiri-04", "eisei2-seiri-17", "eisei2-seiri-08", "eisei2-seiri-21", "eisei2-seiri-14",
+      "eisei2-seiri-23", "eisei2-seiri-38", "eisei2-seiri-33", "eisei2-seiri-44", "eisei2-seiri-18",
     ],
   },
 };
