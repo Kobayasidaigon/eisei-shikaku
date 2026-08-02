@@ -31,7 +31,7 @@ export type MoshiDef = {
   questionIds: string[];
 };
 
-export const MOSHI_UPDATED_AT = "2026-08-01";
+export const MOSHI_UPDATED_AT = "2026-08-02";
 
 export const MOSHI: Partial<Record<CertId, MoshiDef>> = {
   eisei2: {
@@ -48,16 +48,18 @@ export const MOSHI: Partial<Record<CertId, MoshiDef>> = {
       { label: "労働衛生(有害業務以外)", start: 10, count: 10, passCount: 4 },
       { label: "労働生理", start: 20, count: 10, passCount: 4 },
     ],
+    // 各科目の問題プール(50問)から論点が偏らないよう10問ずつ抽出。
+    // 固定ペーパーは選択肢をシャッフルしないため、正解位置が0〜3に散る組合せを選ぶこと。
     questionIds: [
-      // 関係法令(有害業務以外) 10問
-      "eisei2-hourei-01", "eisei2-hourei-02", "eisei2-hourei-03", "eisei2-hourei-04", "eisei2-hourei-05",
-      "eisei2-hourei-07", "eisei2-hourei-08", "eisei2-hourei-10", "eisei2-hourei-12", "eisei2-hourei-14",
-      // 労働衛生(有害業務以外) 10問
-      "eisei2-eisei-01", "eisei2-eisei-02", "eisei2-eisei-03", "eisei2-eisei-04", "eisei2-eisei-05",
-      "eisei2-eisei-06", "eisei2-eisei-07", "eisei2-eisei-08", "eisei2-eisei-10", "eisei2-eisei-12",
-      // 労働生理 10問
-      "eisei2-seiri-01", "eisei2-seiri-02", "eisei2-seiri-03", "eisei2-seiri-04", "eisei2-seiri-05",
-      "eisei2-seiri-06", "eisei2-seiri-08", "eisei2-seiri-09", "eisei2-seiri-11", "eisei2-seiri-13",
+      // 関係法令(有害業務以外) 10問 — 管理体制・健康診断・事務所則・労基法をバランスよく
+      "eisei2-hourei-01", "eisei2-hourei-02", "eisei2-hourei-05", "eisei2-hourei-10", "eisei2-hourei-13",
+      "eisei2-hourei-17", "eisei2-hourei-21", "eisei2-hourei-30", "eisei2-hourei-40", "eisei2-hourei-43",
+      // 労働衛生(有害業務以外) 10問 — 温熱・換気・照明・食中毒・統計・救急・作業管理
+      "eisei2-eisei-01", "eisei2-eisei-02", "eisei2-eisei-06", "eisei2-eisei-11", "eisei2-eisei-13",
+      "eisei2-eisei-17", "eisei2-eisei-22", "eisei2-eisei-28", "eisei2-eisei-41", "eisei2-eisei-48",
+      // 労働生理 10問 — 循環・呼吸・血液・消化・腎臓・神経・感覚・体温
+      "eisei2-seiri-01", "eisei2-seiri-03", "eisei2-seiri-07", "eisei2-seiri-09", "eisei2-seiri-12",
+      "eisei2-seiri-13", "eisei2-seiri-24", "eisei2-seiri-29", "eisei2-seiri-41", "eisei2-seiri-47",
     ],
   },
 };

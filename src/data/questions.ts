@@ -9,22 +9,29 @@
 //   最新の法令・公式テキストと照合してください。
 //
 // 編集メモ: choices は必ず4つ。answer は正解の choices インデックス(0〜3)。
-//   出題時に選択肢はシャッフルされるので、正解の位置は気にしなくてよい。
+//   ドリルは表示時にシャッフルするが、模試(MoshiExam)は固定ペーパーのため
+//   シャッフルしない。正解位置は 0〜3 に散らすこと。
 // =============================================================================
 
-import { EISEI2_QUESTIONS } from "./eisei2-questions";
+import { EISEI2_HOUREI_QUESTIONS } from "./eisei2-hourei-questions";
+import { EISEI2_EISEI_QUESTIONS } from "./eisei2-eisei-questions";
+import { EISEI2_SEIRI_QUESTIONS } from "./eisei2-seiri-questions";
 import { stampCert, type CertId, type CategoryId, type Question } from "./certs";
 
 // 問題データの最終更新日(sitemap の lastmod に使用)。
 // 問題の追加・修正・解説の書き直しをしたら必ずこの日付を更新すること。
-export const QUESTIONS_UPDATED_AT = "2026-08-01";
+export const QUESTIONS_UPDATED_AT = "2026-08-02";
 
 // 型・CERTS・CATEGORIES・軽量ヘルパーは certs.ts に分離(再export)。
 // サーバーコンポーネントは従来どおり "@/data/questions" から import できる。
 export * from "./certs";
 
 // 全資格の問題を結合(サーバー専用。クライアントは question-loader を使う)
-export const QUESTIONS: Question[] = [...EISEI2_QUESTIONS].map(stampCert);
+export const QUESTIONS: Question[] = [
+  ...EISEI2_HOUREI_QUESTIONS,
+  ...EISEI2_EISEI_QUESTIONS,
+  ...EISEI2_SEIRI_QUESTIONS,
+].map(stampCert);
 
 export function questionsOfCert(certId: CertId): Question[] {
   return QUESTIONS.filter((q) => q.cert === certId);
