@@ -8,9 +8,10 @@
 //
 // 前提: public/{KEY}.txt が本番にデプロイ済みであること。
 
-const HOST = "setsubi.shikakumon.com";
-// ★本番前に、このサイト専用の IndexNow キーを発行し、public/{KEY}.txt を用意して差し替える。
-const KEY = "39c0ed41be20e3cf102e12474912bbb4";
+const HOST = "eisei.shikakumon.com";
+// 本サイト専用の IndexNow キー。public/{KEY}.txt に同じ文字列を置いてある。
+// (キーはサイトごとに固有にする必要があるため、姉妹サイトのものを流用しないこと)
+const KEY = "c91787eb780ae215b000ded4d9b8bac6";
 const SITEMAP_URL = `https://${HOST}/sitemap.xml`;
 const ENDPOINT = "https://api.indexnow.org/indexnow";
 
