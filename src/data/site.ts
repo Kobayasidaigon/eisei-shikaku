@@ -10,12 +10,8 @@ export const SITE = {
   // シカクモン関連リンク
   hubUrl: "https://shikakumon.com",
   studioUrl: "https://studio.shikakumon.com/",
-  // ★A8で衛生管理者の通信講座アフィリ提携(アガルート衛生管理者講座 等)が通ったら
-  //   url を設定する。設定した瞬間、採点結果画面に「講座で対策」CTA(rel=sponsored・
-  //   【PR】)が点灯する(シカクモンの freeHref と同じ設計)。空のうちは非表示=偽リンクを出さない。
-  //   なおA8はサイト単位の提携のため、本サイト(eisei.shikakumon.com)を副サイトとして
-  //   登録したうえで提携申請すること(他サイトのa8matリンクの流用は規約違反)。
-  courseAffiliate: { url: "", label: "講座で弱点をつぶす" },
+  // 講座アフィリエイトのリンクは資格(第一種/第二種)ごとに異なるため、
+  // src/data/affiliate.ts の CERT_AFFILIATE で管理する(ここには置かない)。
   // 合格ラインは試験ごとに CERTS で定義（ここは表示用の既定値）
   passLine: 60,
   // 「全分野ミックス」で出題する問題数

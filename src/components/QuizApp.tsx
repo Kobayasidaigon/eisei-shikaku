@@ -17,6 +17,7 @@ import {
   type QuizCounts,
 } from "@/data/certs";
 import { loadCertQuestions } from "@/data/question-loader";
+import CourseAffiliateCTA from "@/components/CourseAffiliateCTA";
 
 // 出題用に加工した問題（選択肢をシャッフルし、正解の位置を付け替える）
 type Prepared = {
@@ -294,6 +295,7 @@ export default function QuizApp({
 
   return (
     <ResultScreen
+      certId={certId}
       name={name}
       label={label}
       passLine={passLine}
@@ -727,6 +729,7 @@ function QuizScreen({
 
 // ============================================================ 結果画面
 function ResultScreen({
+  certId,
   name,
   label,
   passLine,
@@ -736,6 +739,8 @@ function ResultScreen({
   onRetryWrong,
   onHome,
 }: {
+  /** 講座アフィリを資格別に出し分けるために受け取る */
+  certId: CertId;
   name: string;
   label: string;
   passLine: number;
@@ -851,23 +856,8 @@ function ResultScreen({
         </div>
       )}
 
-      {/* 講座アフィリ(A8提携後に url を設定すると点灯・弱点が見えた意欲ピークで換金) */}
-      {SITE.courseAffiliate.url && (
-        <a
-          href={SITE.courseAffiliate.url}
-          target="_blank"
-          rel="nofollow sponsored noopener noreferrer"
-          onClick={() => track("course_click", { placement: "result" })}
-          className="block mt-6 rounded-[12px] bg-accent text-white p-5 transition hover:bg-accent-ink"
-        >
-          <div className="text-[11px] tracked text-paper/70">弱点が見えた今がチャンス【PR】</div>
-          <div className="font-serif text-[17px] font-medium mt-1">{SITE.courseAffiliate.label}</div>
-          <p className="text-[12px] text-paper/85 mt-1.5 leading-relaxed">
-            苦手分野を効率よく。通信講座なら、要点整理から模擬試験まで体系的に対策できます。
-          </p>
-          <span className="inline-block mt-3 text-[13px] underline underline-offset-2">講座を見る →</span>
-        </a>
-      )}
+      {/* 講座アフィリ(資格別。A8提携後に affiliate.ts へリンクを設定すると点灯) */}
+      <CourseAffiliateCTA certId={certId} placement="quiz_result" className="mt-6" />
 
       {/* シカクモンスタジオへの導線(弱点が見えた直後) */}
       <a

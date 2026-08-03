@@ -27,6 +27,7 @@ import { MOSHI } from "@/data/moshi";
 import { EXTRA5 } from "@/data/moshi-extra5";
 import { MOSHI_EXTRA_QUESTIONS } from "@/data/moshi-extra-questions";
 import MoshiFormatFeedback from "@/components/MoshiFormatFeedback";
+import CourseAffiliateCTA from "@/components/CourseAffiliateCTA";
 
 // 5本目の選択肢の挿入位置(全員同一の紙面になるよう問題IDから決定的に算出)
 function insertPos(id: string): number {
@@ -510,6 +511,10 @@ export default function MoshiExam({ certId }: { certId: CertId }) {
           </p>
         )}
       </section>
+
+      {/* 講座アフィリ(合否判定と弱点を見た直後 = 本サイトで最も意欲が高い瞬間)。
+          affiliate.ts のリンクが未設定の間は何も描画されない */}
+      <CourseAffiliateCTA certId={certId} placement="moshi_result" className="mb-5" />
 
       {/* 全問詳解 */}
       <section className="mb-5">
