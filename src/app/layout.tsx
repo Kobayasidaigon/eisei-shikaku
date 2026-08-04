@@ -51,8 +51,10 @@ export const metadata: Metadata = {
     url: SITE.url,
   },
   // Google Search Console 所有権確認(URLプレフィックス・HTMLタグ方式)。
-  // ★本サイト用のプロパティを登録したら、その確認コードを設定する
-  //   (他サイトのコードを流用しないこと)。未設定の間は verification を出さない。
+  // 本サイト専用の確認コード(2026-08-05設定)。
+  verification: {
+    google: "dnyK_8fRmK5hV625XjQD10ccjXMiXHXp_8RdH-jq2zw",
+  },
 };
 
 // サイト全体に効かせる構造化データ。@id で各ページの Article などから参照する。
