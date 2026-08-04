@@ -115,9 +115,12 @@ type Screen = "start" | "quiz" | "result";
 export default function QuizApp({
   initialCert,
   counts,
+  hasPageH1 = false,
 }: {
   initialCert?: CertId;
   counts: QuizCounts;
+  /** ページ側が可視の h1 を持つ場合に true。QuizApp 内の h1 を出さず重複を防ぐ */
+  hasPageH1?: boolean;
 }) {
   const [screen, setScreen] = useState<Screen>("start");
   const initialCertId = initialCert ?? "eisei2";
@@ -259,6 +262,7 @@ export default function QuizApp({
         certId={certId}
         cert={cert}
         lockCert={!!initialCert}
+        hasPageH1={hasPageH1}
         questions={questions}
         counts={counts}
         initialCertId={initialCertId}
@@ -313,6 +317,7 @@ function StartScreen({
   certId,
   cert,
   lockCert,
+  hasPageH1,
   questions,
   counts,
   initialCertId,
@@ -329,6 +334,7 @@ function StartScreen({
   certId: CertId;
   cert: Cert;
   lockCert: boolean;
+  hasPageH1: boolean;
   questions: Question[] | null;
   counts: QuizCounts;
   initialCertId: CertId;
@@ -356,7 +362,7 @@ function StartScreen({
   return (
     <div className="fade-up">
       {/* 資格別ページ(/[certId]/)ではページ側が h1 を持つため出さない */}
-      {!lockCert && (
+      {!lockCert && !hasPageH1 && (
         <h1 className="sr-only">
           第一種・第二種衛生管理者の無料練習問題(関係法令・労働衛生・労働生理・有害業務) — 解説つき4択・本番形式モード・模擬試験対応
         </h1>

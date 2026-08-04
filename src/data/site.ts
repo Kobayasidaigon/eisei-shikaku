@@ -6,7 +6,7 @@ export const SITE = {
   tagline: "第一種・第二種衛生管理者の無料練習問題",
   // 本番: シカクモンのサブドメイン(新規ドメイン購入なし)
   url: "https://eisei.shikakumon.com",
-  description: `第一種・第二種衛生管理者試験の無料練習問題サイト。関係法令・労働衛生・労働生理に加え、第一種の有害業務2科目まで解説つき4択で演習でき、本番形式モードや模擬試験で合格ライン判定もできます。全${CERTS.length}試験・全${QUESTIONS.length}問。`,
+  description: `第一種・第二種衛生管理者の過去問対策サイト。関係法令・労働衛生・労働生理に第一種の有害業務2科目を加えた全${QUESTIONS.length}問を、全問解説つきで無料公開。分野別の一問一答から、科目別の合格基準で判定する模擬試験まで。登録不要・スマホ対応。`,
   // シカクモン関連リンク
   hubUrl: "https://shikakumon.com",
   studioUrl: "https://studio.shikakumon.com/",
