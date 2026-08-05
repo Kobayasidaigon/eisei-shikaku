@@ -34,18 +34,20 @@ export interface AffiliateTarget {
   freeLabel?: string;
 }
 
+// 2026-08-06実装: 本サイトをA8のサイトとして登録済み(ユーザー実施)。リンクは
+// 既提携SAT(現場系eラーニング・購入10%・衛生管理者講座あり)の商品リンク型で、
+// 第一種・第二種共通の衛生管理者講座ページ(sat-co.info/ec/eiseikanrisya)に直行させる。
+// ※A8のa8matは提携(メディア)単位でサイト別には発行されないことを実測確認済み。
+//   掲載サイトの透明性は広告掲載URL提出で担保する。
 export const CERT_AFFILIATE: Record<CertId, AffiliateTarget> = {
   eisei1: {
-    // TODO: A8で本サイトを副サイト登録 → アガルート(またはオンスク)と提携後、
-    //   第一種衛生管理者講座の a8mat リンクをここに貼る。
-    href: "",
-    label: "第一種衛生管理者の対策講座を見る",
+    href: "https://px.a8.net/svt/ejp?a8mat=4B9X1E+FFHK1M+5TRO+BW8O2&a8ejpredirect=https%3A%2F%2Fwww.sat-co.info%2Fec%2Feiseikanrisya",
+    label: "第一種衛生管理者の対策講座(SAT)を見る",
     course: "eisei1",
   },
   eisei2: {
-    // TODO: 同上。第二種衛生管理者講座の a8mat リンクを貼る。
-    href: "",
-    label: "第二種衛生管理者の対策講座を見る",
+    href: "https://px.a8.net/svt/ejp?a8mat=4B9X1E+FFHK1M+5TRO+BW8O2&a8ejpredirect=https%3A%2F%2Fwww.sat-co.info%2Fec%2Feiseikanrisya",
+    label: "第二種衛生管理者の対策講座(SAT)を見る",
     course: "eisei2",
   },
 };
