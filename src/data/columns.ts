@@ -17,6 +17,10 @@ export type ColumnSection = {
   heading: string;
   body?: string;
   list?: string[];
+  /** 比較・一覧情報用の表。モバイルでは横スクロールで表示される */
+  table?: { headers: string[]; rows: string[][] };
+  /** 公式サイト等への出典リンク(本文の下に表示。アフィリエイトには使わない) */
+  link?: { href: string; label: string };
 };
 
 export type Column = {

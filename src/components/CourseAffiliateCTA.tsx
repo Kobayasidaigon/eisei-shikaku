@@ -11,8 +11,14 @@
  *
  * 無料オファー(資料請求・無料体験)は設定されていれば有料講座CTAより先に出す。
  * 申込みの摩擦が小さく、発生件数を取りやすいため。
+ *
+ * 2026-08-07 UX監査対応:
+ * - cta_impression(placement別)を送信し、course_click と組でCTRを実測できるようにした
+ * - 点数直下に置く圧縮版 CompactCourseCTA を追加(結果画面の上下2面でどちらが
+ *   押されるかを placement=quiz_result_top / quiz_result で比較する)
  */
 
+import { useEffect, useRef } from "react";
 import { CERT_AFFILIATE } from "@/data/affiliate";
 import type { CertId } from "@/data/certs";
 
@@ -20,6 +26,31 @@ function track(name: string, params?: Record<string, unknown>) {
   if (typeof window === "undefined") return;
   const w = window as unknown as { gtag?: (...args: unknown[]) => void };
   w.gtag?.("event", name, params);
+}
+
+/**
+ * CTAが50%以上画面に入ったら一度だけ cta_impression を送る。
+ * course_click / cta_impression の比がそのままCTRになる。
+ */
+function useCtaImpression<T extends HTMLElement>(placement: string, course?: string) {
+  const ref = useRef<T | null>(null);
+  const fired = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || fired.current || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (fired.current || !entries.some((e) => e.isIntersecting)) return;
+        fired.current = true;
+        track("cta_impression", { placement, course });
+        io.disconnect();
+      },
+      { threshold: 0.5 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [placement, course]);
+  return ref;
 }
 
 export default function CourseAffiliateCTA({
@@ -33,6 +64,7 @@ export default function CourseAffiliateCTA({
   className?: string;
 }) {
   const target = CERT_AFFILIATE[certId];
+  const impressionRef = useCtaImpression<HTMLDivElement>(placement, target?.course);
   if (!target) return null;
 
   const hasFree = Boolean(target.freeHref);
@@ -40,7 +72,7 @@ export default function CourseAffiliateCTA({
   if (!hasFree && !hasPaid) return null;
 
   return (
-    <div className={className}>
+    <div className={className} ref={impressionRef}>
       {/* 低摩擦オファー(資料請求・無料体験)。設定されていれば有料講座より先に置く */}
       {hasFree && (
         <a
@@ -81,5 +113,45 @@ export default function CourseAffiliateCTA({
         </a>
       )}
     </div>
+  );
+}
+
+/**
+ * 点数直下に置く1〜2行の圧縮版CTA。
+ * lead には「合格ラインまであと◯問」「弱点分野名」など、その場の結果に
+ * 紐づく一言を渡す(汎用文言より意欲との接続が強い)。
+ */
+export function CompactCourseCTA({
+  certId,
+  placement,
+  lead,
+  className = "",
+}: {
+  certId: CertId;
+  placement: string;
+  lead: string;
+  className?: string;
+}) {
+  const target = CERT_AFFILIATE[certId];
+  const impressionRef = useCtaImpression<HTMLAnchorElement>(placement, target?.course);
+  if (!target?.href) return null;
+
+  return (
+    <a
+      ref={impressionRef}
+      href={target.href}
+      target="_blank"
+      rel="nofollow sponsored noopener noreferrer"
+      onClick={() => track("course_click", { placement, course: target.course })}
+      className={`block rounded-[10px] border border-accent/40 bg-accent-wash px-4 py-3.5 transition hover:border-accent no-underline ${className}`}
+    >
+      <div className="text-[13px] text-ink leading-relaxed">
+        {lead}
+        <span className="text-[10px] text-ink-faint ml-1.5">【PR】</span>
+      </div>
+      <span className="inline-block mt-1 text-[13px] text-accent font-medium">
+        {target.label} →
+      </span>
+    </a>
   );
 }

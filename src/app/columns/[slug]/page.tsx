@@ -6,6 +6,7 @@ import { categoriesOfCert, certById, categoryName, homeCertOfCategory, questions
 import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
+import ColumnScrollPing from "@/components/ColumnScrollPing";
 
 export function generateStaticParams() {
   return COLUMNS.map((c) => ({ slug: c.slug }));
@@ -136,6 +137,7 @@ export default async function ColumnArticle({
   return (
     <article className="fade-up">
       <JsonLd data={jsonLd} />
+      <ColumnScrollPing slug={c.slug} />
       {/* パンくず(可視。JSON-LDのBreadcrumbListと一致) */}
       <nav
         aria-label="パンくずリスト"
@@ -180,6 +182,52 @@ export default async function ColumnArticle({
                   </li>
                 ))}
               </ul>
+            )}
+            {s.table && (
+              <div className="mt-3 overflow-x-auto">
+                <table className="w-full text-[13px] border-collapse">
+                  <thead>
+                    <tr>
+                      {s.table.headers.map((h, j) => (
+                        <th
+                          key={j}
+                          className="text-left font-medium text-ink-soft border-b border-line-strong px-3 py-2 whitespace-nowrap"
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {s.table.rows.map((row, j) => (
+                      <tr key={j}>
+                        {row.map((cell, k) => (
+                          <td
+                            key={k}
+                            className={`border-b border-line px-3 py-2 leading-relaxed align-top ${
+                              k === 0 ? "text-ink whitespace-nowrap" : "text-ink-soft"
+                            }`}
+                          >
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {s.link && (
+              <p className="mt-2.5 text-[13px]">
+                <a
+                  href={s.link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent underline underline-offset-2 hover:text-accent-ink"
+                >
+                  {s.link.label} →
+                </a>
+              </p>
             )}
           </section>
         ))}

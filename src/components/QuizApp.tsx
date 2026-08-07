@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { SITE } from "@/data/site";
 // 注意: "@/data/questions" を import しない(全問データがクライアントバンドルに入る)。
@@ -17,7 +17,7 @@ import {
   type QuizCounts,
 } from "@/data/certs";
 import { loadCertQuestions } from "@/data/question-loader";
-import CourseAffiliateCTA from "@/components/CourseAffiliateCTA";
+import CourseAffiliateCTA, { CompactCourseCTA } from "@/components/CourseAffiliateCTA";
 
 // 出題用に加工した問題（選択肢をシャッフルし、正解の位置を付け替える）
 type Prepared = {
@@ -237,6 +237,12 @@ export default function QuizApp({
   function submit() {
     if (revealed || picks[idx] === null) return;
     setRevealed(true);
+    // q_index別の残存率(何問目で離脱するか)を見るための計測
+    track("quiz_q_answered", {
+      cert: cert.id,
+      q_index: idx + 1,
+      correct: picks[idx] === set[idx].answer,
+    });
   }
 
   function advance() {
@@ -617,8 +623,21 @@ function QuizScreen({
   const progress = Math.round(((idx + (revealed ? 1 : 0)) / total) * 100);
   const letters = ["a", "b", "c", "d"];
 
+  // 解説を読み進めて下スクロールした位置のまま次問へ進む(または開始時にヒーローの
+  // 下に設問が隠れる)と設問が画面外になるため、問題の切り替わりごとに設問先頭へ戻す。
+  // key={idx} で問題ごとに再マウントされるので、マウント時に一度だけ実行される。
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top;
+    // 設問の先頭がすでに画面内(上端〜1/3)にあるときは動かさない(無駄な揺れ防止)
+    if (top >= 0 && top < window.innerHeight / 3) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
   return (
-    <div className="fade-up" key={idx}>
+    <div className="fade-up scroll-mt-16" key={idx} ref={rootRef}>
       {/* 上部バー */}
       <div className="flex items-center justify-between mb-2 text-[11px] text-ink-soft">
         <span className="truncate pr-2">{label}</span>
@@ -777,6 +796,15 @@ function ResultScreen({
     return [...map.entries()];
   }, [set, picks]);
 
+  // 圧縮版CTA用: 合格ラインまでの不足問数と、正答率が最も低い分野
+  const needMore = Math.max(0, Math.ceil((passLine / 100) * total) - correct);
+  const weakestCat =
+    byCat.length > 1
+      ? [...byCat].sort(
+          (a, b) => a[1].correct / a[1].total - b[1].correct / b[1].total
+        )[0][0]
+      : null;
+
   return (
     <div className="fade-up">
       {/* スコア */}
@@ -812,6 +840,22 @@ function ResultScreen({
           />
         </div>
       </div>
+
+      {/* 圧縮版の講座CTA(点数直下=結果画面の最初の視界)。
+          下の詳細版(quiz_result)とplacementを分けてCTRを比較する。
+          不合格のときだけ出す(合格者には売り込まない) */}
+      {!passed && wrong.length > 0 && (
+        <CompactCourseCTA
+          certId={certId}
+          placement="quiz_result_top"
+          lead={
+            weakestCat
+              ? `合格ライン${passLine}%まであと${needMore}問。まず「${categoryName(weakestCat)}」の失点から。`
+              : `合格ライン${passLine}%まであと${needMore}問。取りこぼした論点を講義で埋めるなら。`
+          }
+          className="mt-5"
+        />
+      )}
 
       {/* カテゴリ別内訳（2分野以上のときだけ表示） */}
       {byCat.length > 1 && (
