@@ -7,6 +7,7 @@ import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
 import ColumnScrollPing from "@/components/ColumnScrollPing";
+import CourseAffiliateCTA from "@/components/CourseAffiliateCTA";
 
 export function generateStaticParams() {
   return COLUMNS.map((c) => ({ slug: c.slug }));
@@ -95,6 +96,10 @@ export default async function ColumnArticle({
   const drill = !cert && c.drill ? c.drill : undefined;
   const drillCert = drill ? certById(drill.certId) : undefined;
   const drillCount = drill ? questionsOf(drill.certId, drill.categoryId).length : 0;
+
+  // 講座CTAに使う資格。記事に certId が無くても drill 指定があればそちらを使う。
+  // どちらも無い記事(資格をまたぐ比較・用語解説)では広告を出さない。
+  const ctaCertId = c.certId ?? drill?.certId;
   const drillCatName = drill ? categoryName(drill.categoryId) : "";
 
   const jsonLd = [
@@ -266,6 +271,14 @@ export default async function ColumnArticle({
               : "ドリルで演習する →"}
         </Link>
       </div>
+
+      {/* 講座アフィリ(記事を読み切った直後)。ドリルCTA(自サイトの無料アクション)より後に置き、
+          読者の自然な次の一手を先に見せる。無料オファーが設定されていれば
+          CourseAffiliateCTA 側が有料講座より先に無料を出す。
+          資格が特定できない記事(比較・用語解説で certId も drill も無い)には出さない。 */}
+      {ctaCertId && (
+        <CourseAffiliateCTA certId={ctaCertId} placement="column" className="mt-6" />
+      )}
 
       {/* 分野別一問一答へのクラスタリンク(資格に紐づく記事のみ。クロール経路と分野キーワードのアンカーを供給) */}
       {cert && (
