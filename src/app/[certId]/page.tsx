@@ -7,6 +7,8 @@ import AuthorBox from "@/components/AuthorBox";
 import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import { COLUMNS } from "@/data/columns";
 import { MOSHI } from "@/data/moshi";
+import { moshi2ProductOf } from "@/data/products";
+import Moshi2TopLink from "@/components/Moshi2TopLink";
 import {
   CERTS,
   certById,
@@ -183,6 +185,13 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
           >
             模擬試験 第1回を受ける →
           </Link>
+          {moshi2ProductOf(cert.id) && (
+            <Moshi2TopLink
+              certId={cert.id}
+              priceJpy={moshi2ProductOf(cert.id)!.priceJpy}
+              className="rounded-[8px] border border-line-strong px-4 py-2 text-[13px] text-ink no-underline transition-colors hover:border-accent hover:text-accent-ink shrink-0"
+            />
+          )}
         </div>
       )}
 
