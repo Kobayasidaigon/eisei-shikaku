@@ -23,6 +23,9 @@ import {
   type Question,
 } from "@/data/certs";
 import { loadCertQuestions } from "@/data/question-loader";
+import { moshi2ProductOf } from "@/data/products";
+import Moshi2Offer from "@/components/Moshi2Offer";
+import type { MoshiDef } from "@/data/moshi";
 import { MOSHI } from "@/data/moshi";
 import { EXTRA5 } from "@/data/moshi-extra5";
 import { MOSHI_EXTRA_QUESTIONS } from "@/data/moshi-extra-questions";
@@ -55,9 +58,20 @@ function formatRemaining(sec: number): string {
 
 const catName = (id: string) => CATEGORIES.find((c) => c.id === id)?.name ?? id;
 
-export default function MoshiExam({ certId }: { certId: CertId }) {
+export default function MoshiExam({
+  certId,
+  paper,
+}: {
+  certId: CertId;
+  /**
+   * 外部から渡す固定ペーパー(有料の第2回など)。省略時は第1回(無料)を
+   * MOSHI 定義とローカルの問題データから組み立てる従来の挙動。
+   * 渡す場合、questions は選択肢の整形まで済ませたものを渡すこと。
+   */
+  paper?: { def: MoshiDef; questions: Question[] };
+}) {
   const cert = CERTS.find((c) => c.id === certId);
-  const def = MOSHI[certId];
+  const def = paper?.def ?? MOSHI[certId];
 
   const sessionKey = `moshiSession_${certId}_r${def?.round ?? 1}_v1`;
   const limitMs = (def?.timeLimitMin ?? 0) * 60 * 1000;
@@ -77,6 +91,11 @@ export default function MoshiExam({ certId }: { certId: CertId }) {
   useEffect(() => {
     let alive = true;
     if (!def) return;
+    // 有料の第2回は整形済みのペーパーが渡ってくる。無料バンクは読まない。
+    if (paper) {
+      setQuestions(paper.questions);
+      return;
+    }
     loadCertQuestions(certId).then((all) => {
       if (!alive) return;
       const byId = new Map(all.map((q) => [q.id, q]));
@@ -103,7 +122,7 @@ export default function MoshiExam({ certId }: { certId: CertId }) {
     return () => {
       alive = false;
     };
-  }, [certId, def]);
+  }, [certId, def, paper]);
 
   // 中断セッションの検出。期限切れは破棄して注記だけ出す
   useEffect(() => {
@@ -550,7 +569,12 @@ export default function MoshiExam({ certId }: { certId: CertId }) {
         </div>
       </section>
 
-      <p className="text-[12px] text-ink-faint mb-5">第2回の模擬試験は現在制作中です。</p>
+      {/* 販売中なら購入導線、まだ無ければ「制作中」。両方出すと矛盾するため排他にする。 */}
+      {moshi2ProductOf(certId) ? (
+        <Moshi2Offer certId={certId} place="moshi_result" className="mb-5" />
+      ) : (
+        <p className="text-[12px] text-ink-faint mb-5">第2回の模擬試験は現在制作中です。</p>
+      )}
 
       <div className="flex flex-wrap items-center gap-4">
         <button
