@@ -3,6 +3,7 @@ import { SITE } from "@/data/site";
 import { COLUMNS, columnDates } from "@/data/columns";
 import { CERTS, QUESTIONS_UPDATED_AT, ownedCategoriesOfCert, questionsOf, questionsOfCert } from "@/data/questions";
 import { MOSHI, MOSHI_UPDATED_AT } from "@/data/moshi";
+import { moshi2ProductOf } from "@/data/products";
 
 export const dynamic = "force-static";
 
@@ -38,6 +39,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     if (MOSHI[cert.id]) {
       entries.push({
         url: `${base}/${cert.id}/moshi/`,
+        lastModified: new Date(MOSHI_UPDATED_AT),
+        changeFrequency: "monthly",
+        priority: 0.8,
+      });
+    }
+    // 第2回模試(有料)の商品ページ。問題データは載らないので通常どおり収録する
+    if (moshi2ProductOf(cert.id)) {
+      entries.push({
+        url: `${base}/${cert.id}/moshi2/`,
         lastModified: new Date(MOSHI_UPDATED_AT),
         changeFrequency: "monthly",
         priority: 0.8,
