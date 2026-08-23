@@ -50,6 +50,7 @@ export type Moshi2Paper = Moshi2Source & {
  * 静的解析で誤ってクライアント側に引きずり込まれる経路を作らないため。
  */
 const SOURCES: Partial<Record<CertId, () => Promise<Moshi2Source>>> = {
+  "eisei2": () => import("./moshi2/eisei2").then((m) => m.EISEI2_MOSHI2),
   "eisei1": () => import("./moshi2/eisei1").then((m) => m.EISEI1_MOSHI2),
 };
 

@@ -56,6 +56,27 @@ export type Moshi2Product = {
 
 /** 第2回模試を販売する資格。ここに載っている資格だけ商品ページが生成される。 */
 export const MOSHI2_PRODUCTS: Partial<Record<CertId, Moshi2Product>> = {
+  "eisei2": {
+    certId: "eisei2",
+    name: "第二種衛生管理者 模擬試験 第2回",
+    priceJpy: 1280,
+    description:
+      "本試験と同じ30問・180分・3科目の構成。各科目40%以上かつ総得点60%以上が合格基準で、第1回とは完全に別問題です。自動採点・科目別の合否判定・全問の解説に加え、A4に組んだ印刷用の紙面(PDF保存可)つき。",
+    round: 2,
+    questionCount: 30,
+    timeLimitMin: 180,
+    passCount: 18,
+    passLabel: "総得点60%(30問中18問)以上、かつ各科目40%以上",
+    choiceFormat: "4択(本試験は五肢択一)",
+    isFullSpec: true,
+    specNote:
+      "本試験(第二種衛生管理者)は関係法令(有害業務以外)10問・労働衛生(有害業務以外)10問・労働生理10問の計30問、試験時間3時間、五肢択一で、合格基準は各科目40%以上かつ総得点60%以上です。本模試も同一の科目構成・問題数・出題順・合格基準で構成しています(選択肢は演習しやすい4択の簡略形式で、実際の試験は五肢択一です)。第1回とは問題が完全に別です。",
+    sections: [
+      { label: "関係法令(有害業務以外)", categories: ["e2-hourei"], count: 10, passCount: 4 },
+      { label: "労働衛生(有害業務以外)", categories: ["e2-eisei"], count: 10, passCount: 4 },
+      { label: "労働生理", categories: ["e2-seiri"], count: 10, passCount: 4 },
+    ],
+  },
   "eisei1": {
     certId: "eisei1",
     name: "第一種衛生管理者 模擬試験 第2回",

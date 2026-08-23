@@ -44,6 +44,17 @@ const POS_REF = /選択肢[0-9１-４]|最初の選択肢|[1-4１-４]番目の�
    コピーしたときは必ず書き換えること。 */
 const TARGETS = [
   {
+    certId: "eisei2",
+    paid: "src/data/moshi2/eisei2.ts",
+    // 第1回はこれらの無料バンクから出題されるため、ここと重複が無ければ第1回とも重複しない。
+    freePool: [
+      "src/data/eisei2-hourei-questions.ts",
+      "src/data/eisei2-eisei-questions.ts",
+      "src/data/eisei2-seiri-questions.ts",
+      "src/data/moshi-extra-questions.ts",
+    ],
+  },
+  {
     certId: "eisei1",
     paid: "src/data/moshi2/eisei1.ts",
     // 第1回はこれらの無料バンクから出題されるため、ここと重複が無ければ第1回とも重複しない。
