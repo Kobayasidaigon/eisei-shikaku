@@ -25,7 +25,7 @@ import type { MoshiDef } from "@/data/moshi";
 import { moshi2ProductOf } from "@/data/products";
 import { SITE } from "@/data/site";
 
-type Paper = { def: MoshiDef; questions: Question[]; dev?: boolean };
+type Paper = { def: MoshiDef; questions: Question[]};
 type Status = "loading" | "locked" | "ready" | "notReady" | "error";
 
 function track(name: string, params?: Record<string, unknown>) {
@@ -161,12 +161,6 @@ export default function Moshi2Gate({ certId }: { certId: CertId }) {
   if (status === "ready" && paper) {
     return (
       <>
-        {paper.dev && (
-          <p className="print-hide mb-4 rounded-[8px] border border-wrong/40 bg-wrong-wash px-4 py-2.5 text-[12px] text-wrong">
-            開発モードで解除中です(DEV_UNLOCK_MOSHI2)。決済を通さずに表示しています。
-            この表示は本番では出ません。
-          </p>
-        )}
         {/* 印刷導線は受験UIの「上」に置く。下に置くと140問の後ろに埋もれて見つからない */}
         <div className="print-hide mb-2.5 flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-line bg-surface p-4">
           <p className="text-[13px] text-ink-soft leading-relaxed">

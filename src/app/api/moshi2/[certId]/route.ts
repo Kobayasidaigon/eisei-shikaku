@@ -13,7 +13,7 @@ import { NextResponse } from "next/server";
 import type { Question } from "@/data/certs";
 import { loadMoshi2 } from "@/data/moshi2";
 import { moshi2ProductOf } from "@/data/products";
-import { accessCookieName, isDevUnlockEnabled, verifyAccess } from "@/lib/access";
+import { accessCookieName, verifyAccess } from "@/lib/access";
 
 /** 3肢択一の本試験に合わせて誤答を1本落とす(第1回と同じ整形)。 */
 /**
@@ -60,11 +60,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ cer
     return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
 
-  // 開発時のみ、決済を通さずに中身を確認できる(本番では必ず false)
-  const devUnlocked = isDevUnlockEnabled();
   const jar = await cookies();
   const token = jar.get(accessCookieName(certId))?.value;
-  if (!devUnlocked && !verifyAccess(token, certId)) {
+  if (!verifyAccess(token, certId)) {
     // 未購入。商品情報だけ返して購入画面を描けるようにする。
     return NextResponse.json(
       { error: "payment_required", product: { name: product.name, priceJpy: product.priceJpy } },
@@ -82,8 +80,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ cer
 
   return NextResponse.json(
     {
-      // 画面側に「決済を通さず開いている」と出すための印。本番では常に undefined
-      dev: devUnlocked ? true : undefined,
       def: {
         round: paper.round,
         timeLimitMin: paper.timeLimitMin,
