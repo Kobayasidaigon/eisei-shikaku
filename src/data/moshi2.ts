@@ -89,3 +89,48 @@ export async function loadMoshi2(certId: CertId): Promise<Moshi2Paper | null> {
     }, []),
   };
 }
+
+/**
+ * 表示用の整形。API(受験用)とサンプル表示の両方から呼ぶ。
+ * 同じ関数を通すことで、サンプルに出る紙面と購入後の紙面が必ず一致する。
+ */
+
+/** 5本目の誤答の挿入位置。問題IDから決定的に決まる(無料の第1回と同じ式)。 */
+function insertPos(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 997;
+  return h % 5;
+}
+
+/** 五肢択一の本試験に合わせて5本目の誤答を挿し込む。 */
+export function applyExtra5(questions: Question[], extra?: Record<string, string>): Question[] {
+  if (!extra) return questions;
+  return questions.map((q) => {
+    const fifth = extra[q.id];
+    if (!fifth) return q;
+    const pos = insertPos(q.id);
+    const choices = [...q.choices];
+    choices.splice(pos, 0, fifth);
+    // 挿入位置が正解以前なら、正解の index が1つ後ろへずれる
+    return { ...q, choices, answer: q.answer >= pos ? q.answer + 1 : q.answer };
+  });
+}
+
+/** 3肢択一の本試験に合わせて誤答を1本落とす。 */
+export function applyDrop3(questions: Question[], drop?: Record<string, number>): Question[] {
+  if (!drop) return questions;
+  return questions.map((q) => {
+    const d = drop[q.id];
+    if (d == null || d === q.answer || d < 0 || d >= q.choices.length) return q;
+    return {
+      ...q,
+      choices: q.choices.filter((_, i) => i !== d),
+      answer: q.answer > d ? q.answer - 1 : q.answer,
+    };
+  });
+}
+
+/** 受験者が実際に見る並びに整えた紙面を返す。 */
+export function shapeForDisplay(paper: Moshi2Paper): Question[] {
+  return applyExtra5(applyDrop3(paper.questions, paper.drop3), paper.extra5);
+}
