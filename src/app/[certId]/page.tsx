@@ -192,6 +192,12 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
               className="rounded-[8px] border border-line-strong px-4 py-2 text-[13px] text-ink no-underline transition-colors hover:border-accent hover:text-accent-ink shrink-0"
             />
           )}
+          {moshi2ProductOf(cert.id) && (
+            <p className="w-full border-t border-line pt-3 text-[12px] text-ink-faint leading-relaxed">
+              第2回は第1回と1問も重複しない別問題で、印刷用の紙面つきの買い切りです。
+              商品ページにサンプル問題を解説つきで2問出しているので、中身を見てから決められます。
+            </p>
+          )}
         </div>
       )}
 

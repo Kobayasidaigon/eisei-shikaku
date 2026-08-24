@@ -19,7 +19,7 @@ import type { MoshiDef } from "@/data/moshi";
 import { AUTHOR, SITE } from "@/data/site";
 import { moshi2ProductOf } from "@/data/products";
 
-type Paper = { def: MoshiDef; questions: Question[]; dev?: boolean };
+type Paper = { def: MoshiDef; questions: Question[]};
 type Status = "loading" | "locked" | "ready" | "notReady" | "error";
 
 const MARK = ["ア", "イ", "ウ", "エ", "オ"];
@@ -108,12 +108,6 @@ export default function Moshi2Print({ certId }: { certId: CertId }) {
       {/* ------------------------------------------------------------------
           操作パネル(画面のみ)
          ------------------------------------------------------------------ */}
-      {paper.dev && (
-        <p className="print-hide mb-4 rounded-[8px] border border-wrong/40 bg-wrong-wash px-4 py-2.5 text-[12px] text-wrong">
-          開発モードで解除中です(DEV_UNLOCK_MOSHI2)。決済を通さずに表示しています。
-          この表示は本番では出ません。
-        </p>
-      )}
 
       <section className="print-hide bg-surface border border-line rounded-[10px] p-5 mb-6">
         <h2 className="font-serif text-[17px] font-medium text-ink mb-2">印刷・PDF保存</h2>

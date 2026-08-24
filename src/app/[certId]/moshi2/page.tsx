@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Moshi2Gate from "@/components/Moshi2Gate";
+import Moshi2Sample from "@/components/Moshi2Sample";
 import JsonLd from "@/components/JsonLd";
 import { SITE, OG_BASE, absUrl } from "@/data/site";
 import { moshi2CertIds, moshi2ProductOf } from "@/data/products";
@@ -124,6 +125,8 @@ export default async function Moshi2Page({ params }: { params: Promise<{ certId:
           (買い切り・登録不要)
         </p>
       </div>
+
+      <Moshi2Sample certId={cert.id} />
 
       <Moshi2Gate certId={cert.id} />
 

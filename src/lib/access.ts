@@ -38,21 +38,6 @@ function secret(): string {
   return s;
 }
 
-/**
- * 開発環境専用: 決済を通さずに有料の紙面を開けるようにする。
- * ローカルで見た目や印刷を確認するたびに Stripe のテスト決済を通すのは面倒なため。
- *
- * セーフティ (姉妹プロジェクトの DEV_MOCK_AUTH と同じ二重ガード):
- * - NODE_ENV === "development" でのみ有効。next build した本番では必ず false
- * - さらに環境変数 DEV_UNLOCK_MOSHI2 === "true" でのみ有効
- * - 本番ビルドでは絶対に有効にならない
- */
-export function isDevUnlockEnabled(): boolean {
-  return (
-    process.env.NODE_ENV === "development" && process.env.DEV_UNLOCK_MOSHI2 === "true"
-  );
-}
-
 /** 購入した資格ごとに cookie を分ける(1資格1決済のため)。 */
 export function accessCookieName(certId: string): string {
   return `${MOSHI2_CONFIG.cookiePrefix}${certId}`;

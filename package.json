@@ -9,7 +9,8 @@
     "indexnow": "node scripts/indexnow-ping.mjs",
     "prebuild": "node scripts/audit-moshi2.mjs && node scripts/test-checkout-origin.mjs && node scripts/test-redemptions.mjs",
     "build:moshi2": "node scripts/build-moshi2.mjs",
-    "stripe:check": "node scripts/check-stripe.mjs"
+    "stripe:check": "node scripts/check-stripe.mjs",
+    "sales": "node --experimental-strip-types scripts/sales-report.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.9",
