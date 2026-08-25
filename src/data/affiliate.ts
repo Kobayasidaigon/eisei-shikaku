@@ -39,16 +39,24 @@ export interface AffiliateTarget {
 // 第一種・第二種共通の衛生管理者講座ページ(sat-co.info/ec/eiseikanrisya)に直行させる。
 // ※A8のa8matは提携(メディア)単位でサイト別には発行されないことを実測確認済み。
 //   掲載サイトの透明性は広告掲載URL提出で担保する。
+// 2026-08-26追加: LECオンライン(東京リーガルマインド・A8提携承認2026-08-06・
+//   資料請求100円/講座書籍購入1%)はLEC本体に衛生管理者講座があるため、
+//   低摩擦の無料オファー(資料請求)として freeHref に設定。素材=A8テキスト素材029
+//   (資格サイト=衛生管理者ドリルで発行)。生成リンクは改変しないこと。
 export const CERT_AFFILIATE: Record<CertId, AffiliateTarget> = {
   eisei1: {
     href: "https://px.a8.net/svt/ejp?a8mat=4B9X1E+FFHK1M+5TRO+BW8O2&a8ejpredirect=https%3A%2F%2Fwww.sat-co.info%2Fec%2Feiseikanrisya",
     label: "第一種衛生管理者の対策講座(SAT)を見る",
     course: "eisei1",
+    freeHref: "https://px.a8.net/svt/ejp?a8mat=4B9ZDE+3TJA5E+1G62+64JTE",
+    freeLabel: "LECの講座案内資料を無料で請求する",
   },
   eisei2: {
     href: "https://px.a8.net/svt/ejp?a8mat=4B9X1E+FFHK1M+5TRO+BW8O2&a8ejpredirect=https%3A%2F%2Fwww.sat-co.info%2Fec%2Feiseikanrisya",
     label: "第二種衛生管理者の対策講座(SAT)を見る",
     course: "eisei2",
+    freeHref: "https://px.a8.net/svt/ejp?a8mat=4B9ZDE+3TJA5E+1G62+64JTE",
+    freeLabel: "LECの講座案内資料を無料で請求する",
   },
 };
 
