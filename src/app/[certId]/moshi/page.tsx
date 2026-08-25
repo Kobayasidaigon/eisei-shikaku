@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import MoshiExam from "@/components/MoshiExam";
 import JsonLd from "@/components/JsonLd";
 import { SITE, OG_BASE, absUrl } from "@/data/site";
-import { MOSHI } from "@/data/moshi";
+import { MOSHI, moshiDefFor } from "@/data/moshi";
 import { EXTRA5 } from "@/data/moshi-extra5";
 import { MOSHI_EXTRA_QUESTIONS } from "@/data/moshi-extra-questions";
 import { certById, questionsOfCert, type CertId } from "@/data/questions";
@@ -16,7 +16,7 @@ export function generateStaticParams() {
 
 // 固定ペーパーの参照整合をビルド時に検証する(欠けたIDがあればビルドを落とす)
 function paperOf(certId: CertId) {
-  const def = MOSHI[certId];
+  const def = moshiDefFor(certId as CertId) ?? MOSHI[certId];
   if (!def) return null;
   const pool = new Set(questionsOfCert(certId).map((q) => q.id));
   // 模試専用問題(組合せ形式・鑑別等)もペーパーの一部
@@ -35,7 +35,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { certId } = await params;
   const cert = certById(certId as CertId);
-  const def = MOSHI[certId as CertId];
+  const def = moshiDefFor(certId as CertId)!;
   if (!cert || !def) return {};
   const n = def.questionIds.length;
   const title = `${cert.name} 模擬試験 第1回【${n}問・${def.timeLimitMin}分・無料】`;

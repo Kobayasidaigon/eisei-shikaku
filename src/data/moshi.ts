@@ -103,3 +103,61 @@ export const MOSHI: Partial<Record<CertId, MoshiDef>> = {
     ],
   },
 };
+
+// =============================================================================
+// 第1回を「ハーフ模試」として提供する切り替え。
+//
+// 検索計測で「無料のフル模試が力試しの需要を満たし切り、有料の第2回が
+// 売れない」構造が示唆されたら true にする(判断材料は第1回の完走者数)。
+// true でも問題データ(questionIds)は削らない。表示時に各科目を約半分へ
+// 間引くだけなので、いつでも false に戻せる。
+// =============================================================================
+export const MOSHI_FREE_HALF = false;
+
+/** 科目比率を保ったまま約半分に間引いたハーフ版の定義を作る。 */
+export function halfMoshiDef(def: MoshiDef): MoshiDef {
+  const scale = (n: number, of: number, newOf: number) => Math.max(1, Math.ceil((n / of) * newOf));
+  if (def.sections && def.sections.length > 0) {
+    const ids: string[] = [];
+    let cursor = 0;
+    const sections = def.sections.map((sec) => {
+      const take = Math.max(1, Math.ceil(sec.count / 2));
+      ids.push(...def.questionIds.slice(sec.start, sec.start + take));
+      const out = { ...sec, start: cursor, count: take, passCount: scale(sec.passCount, sec.count, take) };
+      cursor += take;
+      return out;
+    });
+    const passCount = scale(def.passCount, def.questionIds.length, ids.length);
+    return {
+      ...def,
+      questionIds: ids,
+      sections,
+      passCount,
+      timeLimitMin: Math.max(10, Math.ceil(def.timeLimitMin / 2 / 5) * 5),
+      passLabel: `${ids.length}問中${passCount}問以上(フル版と同じ基準率)`,
+      isFullSpec: false,
+      lead: `本試験の約半分の問題数で力試しできる無料のハーフ模試です。本試験どおりのフル仕様の模試は第2回(有料)で受験できます。`,
+      specNote: `これは本試験の約半分の問題数に間引いたハーフ模試です。科目構成・出題順・合格基準の比率はフル版に合わせています。${def.specNote}`,
+    };
+  }
+  const take = Math.max(1, Math.ceil(def.questionIds.length / 2));
+  const ids = def.questionIds.slice(0, take);
+  const passCount = scale(def.passCount, def.questionIds.length, take);
+  return {
+    ...def,
+    questionIds: ids,
+    passCount,
+    timeLimitMin: Math.max(10, Math.ceil(def.timeLimitMin / 2 / 5) * 5),
+    passLabel: `${take}問中${passCount}問以上(フル版と同じ基準率)`,
+    isFullSpec: false,
+    lead: `本試験の約半分の問題数で力試しできる無料のハーフ模試です。本試験どおりのフル仕様の模試は第2回(有料)で受験できます。`,
+    specNote: `これは本試験の約半分の問題数に間引いたハーフ模試です。出題順と合格基準の比率はフル版に合わせています。${def.specNote}`,
+  };
+}
+
+/** 第1回の定義を取得する。MOSHI_FREE_HALF が真ならハーフ版を返す。 */
+export function moshiDefFor(certId: CertId): MoshiDef | undefined {
+  const def = MOSHI[certId];
+  if (!def) return undefined;
+  return MOSHI_FREE_HALF ? halfMoshiDef(def) : def;
+}

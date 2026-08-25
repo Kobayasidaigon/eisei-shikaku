@@ -6,7 +6,7 @@ import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
 import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import { COLUMNS } from "@/data/columns";
-import { MOSHI } from "@/data/moshi";
+import { moshiDefFor } from "@/data/moshi";
 import { moshi2ProductOf } from "@/data/products";
 import Moshi2TopLink from "@/components/Moshi2TopLink";
 import {
@@ -173,11 +173,11 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
       </div>
 
       {/* 模擬試験への導線(模試定義がある試験のみ) */}
-      {MOSHI[cert.id] && (
+      {moshiDefFor(cert.id) && (
         <div className="mb-6 bg-surface border border-line rounded-[10px] p-4 flex flex-wrap items-center justify-between gap-3">
           <p className="text-[13px] text-ink-soft leading-relaxed">
-            時間を計って本番さながらに解くなら、固定{MOSHI[cert.id]!.questionIds.length}問・
-            {MOSHI[cert.id]!.timeLimitMin}分・本試験どおりの合否判定つきの模擬試験へ。
+            時間を計って本番さながらに解くなら、固定{moshiDefFor(cert.id)!.questionIds.length}問・
+            {moshiDefFor(cert.id)!.timeLimitMin}分・合否判定つきの模擬試験へ。
           </p>
           <Link
             href={`/${cert.id}/moshi/`}

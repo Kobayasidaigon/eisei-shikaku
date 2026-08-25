@@ -26,7 +26,7 @@ import { loadCertQuestions } from "@/data/question-loader";
 import { moshi2ProductOf } from "@/data/products";
 import Moshi2Offer from "@/components/Moshi2Offer";
 import type { MoshiDef } from "@/data/moshi";
-import { MOSHI } from "@/data/moshi";
+import { moshiDefFor } from "@/data/moshi";
 import { EXTRA5 } from "@/data/moshi-extra5";
 import { MOSHI_EXTRA_QUESTIONS } from "@/data/moshi-extra-questions";
 import MoshiFormatFeedback from "@/components/MoshiFormatFeedback";
@@ -71,7 +71,7 @@ export default function MoshiExam({
   paper?: { def: MoshiDef; questions: Question[] };
 }) {
   const cert = CERTS.find((c) => c.id === certId);
-  const def = paper?.def ?? MOSHI[certId];
+  const def = paper?.def ?? moshiDefFor(certId);
 
   const sessionKey = `moshiSession_${certId}_r${def?.round ?? 1}_v1`;
   const limitMs = (def?.timeLimitMin ?? 0) * 60 * 1000;
