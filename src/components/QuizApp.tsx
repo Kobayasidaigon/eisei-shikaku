@@ -574,7 +574,7 @@ function StartScreen({
 
       {/* 関連サービス: シカクモンスタジオ(静かな二次導線。主役の本番形式ボタンより下・琥珀は使わず bg-surface) */}
       <a
-        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=home_card`}
+        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=home_card&exam=${encodeURIComponent(cert.name)}`}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => track("studio_cta_click", { placement: "home" })}
@@ -909,9 +909,11 @@ function ResultScreen({
       {/* 講座アフィリ(資格別。A8提携後に affiliate.ts へリンクを設定すると点灯) */}
       <CourseAffiliateCTA certId={certId} placement="quiz_result" className="mt-6" />
 
-      {/* シカクモンスタジオへの導線(弱点が見えた直後) */}
+      {/* シカクモンスタジオへの導線(弱点が見えた直後)。
+          注意: この画面の `name` は受験者が入力した氏名なので資格名には使えない。
+          資格名は certId から引く(着地先で ?exam= がお試し生成の初期値になる)。 */}
       <a
-        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=result_cta`}
+        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=result_cta&exam=${encodeURIComponent(certById(certId)!.name)}`}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => track("studio_cta_click", { placement: "result" })}

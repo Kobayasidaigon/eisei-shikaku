@@ -320,7 +320,9 @@ export default async function ColumnArticle({
 
       {/* 姉妹サービス: シカクモンスタジオ(記事末の二次導線。主役は上のドリルCTA、琥珀は使わない) */}
       <a
-        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=column_footer`}
+        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=column_footer${
+          (cert ?? drillCert) ? `&exam=${encodeURIComponent((cert ?? drillCert)!.name)}` : ""
+        }`}
         target="_blank"
         rel="noopener noreferrer"
         className="block mt-3 rounded-[12px] border border-line bg-surface p-5 transition hover:border-accent"
