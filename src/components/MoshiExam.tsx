@@ -489,6 +489,20 @@ export default function MoshiExam({
           合格基準は{def.passLabel}。所要時間 約{result?.elapsedMin ?? def.timeLimitMin}分。
           ※この判定はオリジナル問題による目安です。
         </p>
+        {/* 結果のシェア(テキストのみ) */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          <a
+            href={`https://x.com/intent/post?text=${encodeURIComponent(
+              `${cert.name}の模擬試験(第${def.round}回)で${score}/${questions.length}問正解(${pct}%)${passed ? "・合格圏" : ""}でした。${SITE.name}で無料受験中`
+            )}&url=${encodeURIComponent(`${SITE.url}/${certId}/moshi/`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track("share_click", { cert: certId, channel: "x", place: "moshi" })}
+            className="text-[12px] text-accent-ink border border-accent/40 rounded-[6px] px-3 py-1.5 no-underline transition hover:bg-accent-wash"
+          >
+            この結果をXに投稿する
+          </a>
+        </div>
       </section>
 
       {/* 本試験経験者への形式アンケート(出題形式の一次情報収集) */}

@@ -1,0 +1,45 @@
+# 衛生管理者ドリル
+
+> 第一種・第二種衛生管理者の練習問題1,000問を無料で提供するサイト（シカクモンの姉妹サイト）
+
+衛生管理者ドリルは、第一種・第二種衛生管理者試験に特化した無料の練習問題サイトです。公式の出題範囲にもとづくオリジナル4択問題を全問解説つきで公開し、本試験と同じ問題数・時間・科目別合格基準の無料模擬試験も受けられます。
+
+## 対応資格
+
+- 第一種衛生管理者（実質1,000問）: 有害業務に係る関係法令200問・労働衛生200問に加え、第二種と共通の3科目600問で演習。本試験は5範囲44問・400点満点・範囲ごと40%かつ合計60%が合格基準
+- 第二種衛生管理者（600問）: 関係法令・労働衛生・労働生理の3科目各200問。本試験は30問・300点満点
+
+## コンテンツ
+
+- 合計1,000問のオリジナル練習問題（全問解説つき・分野別）
+- 本試験と同じ構成の無料模擬試験: 第一種44問3時間・第二種30問3時間（科目別合格基準・自動採点つき）
+- コラム記事（過去問の入手先・難易度・勉強法・特例第一種など）
+
+## リンク
+
+- トップページ: https://eisei.shikakumon.com/
+- 第一種衛生管理者の練習問題: https://eisei.shikakumon.com/eisei1/
+- 第二種衛生管理者の練習問題: https://eisei.shikakumon.com/eisei2/
+- 第一種の無料模試（44問・3時間）: https://eisei.shikakumon.com/eisei1/moshi/
+- 第二種の無料模試（30問・3時間）: https://eisei.shikakumon.com/eisei2/moshi/
+- コラム一覧: https://eisei.shikakumon.com/columns/
+
+## よくある質問に答える記事
+
+- 第一種衛生管理者の過去問はどこで手に入る: https://eisei.shikakumon.com/columns/eisei1-kakomon/
+- 第二種衛生管理者の過去問の使い方: https://eisei.shikakumon.com/columns/eisei2-kakomon/
+- 特例第一種衛生管理者とは（二種から一種へ）: https://eisei.shikakumon.com/columns/eisei1-tokurei/
+- 第一種衛生管理者の難易度と合格率: https://eisei.shikakumon.com/columns/eisei1-nanido/
+- 第二種衛生管理者の難易度: https://eisei.shikakumon.com/columns/eisei2-nanido/
+- 第一種と第二種どちらを受けるべきか: https://eisei.shikakumon.com/columns/eisei2-daiisshu-hikaku/
+
+## 姉妹サイト
+
+- シカクモン（法務・ビジネス系10資格）: https://shikakumon.com/
+- 設備資格ドリル（電験三種・電工など9資格）: https://setsubi.shikakumon.com/
+- 筋トレ資格ドリル: https://kintore.shikakumon.com/
+
+## 運営
+
+- 運営者はシカクモン（shikakumon.com）と同一です
+- お問い合わせ: https://eisei.shikakumon.com/contact/

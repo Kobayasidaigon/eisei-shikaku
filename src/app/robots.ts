@@ -9,7 +9,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        // llms.txt(AI検索向けサイト概要)と IndexNow キーは .txt 除外より優先して許可
+        allow: ["/", "/llms.txt", "/c91787eb780ae215b000ded4d9b8bac6.txt"],
         // static export が吐く RSC ペイロード(.txt)は canonical を持たない本文複製のため
         // クロール対象から外す(レンダリングに必要な JS/CSS はブロックしない)
         disallow: ["/*.txt$", "/__next."],
