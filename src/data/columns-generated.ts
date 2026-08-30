@@ -170,6 +170,7 @@ export const GENERATED_COLUMNS: Column[] = [
   {
     slug: "eisei2-kakomon",
     certId: "eisei2",
+    related: ["eisei2-benkyou", "eisei2-nanido", "eisei1-kakomon", "eisei2-nittei"],
     title: "第二種衛生管理者の過去問の使い方｜公表問題を最大限に活かす手順",
     shortTitle: "過去問の使い方",
     lead: "衛生管理者は過去問の反復が最も効く試験です。公表問題の入手方法から、間違いノートの作り方、周回のペース配分までを具体的に解説します。",
