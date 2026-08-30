@@ -20,6 +20,7 @@
 
 import { useEffect, useRef } from "react";
 import { CERT_AFFILIATE } from "@/data/affiliate";
+import A8Imp from "@/components/A8Imp";
 import type { CertId } from "@/data/certs";
 
 function track(name: string, params?: Record<string, unknown>) {
@@ -73,6 +74,8 @@ export default function CourseAffiliateCTA({
 
   return (
     <div className={className} ref={impressionRef}>
+      {hasFree && <A8Imp href={target.freeHref} />}
+      {hasPaid && <A8Imp href={target.href} />}
       {/* 低摩擦オファー(資料請求・無料体験)。設定されていれば有料講座より先に置く */}
       {hasFree && (
         <a
@@ -152,6 +155,7 @@ export function CompactCourseCTA({
       <span className="inline-block mt-1 text-[13px] text-accent font-medium">
         {target.label} →
       </span>
+      <A8Imp href={target.href} />
     </a>
   );
 }
