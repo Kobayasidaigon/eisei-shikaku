@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { SITE } from "@/data/site";
+import { studioBaseUrl } from "@/lib/studio-lp";
 // 注意: "@/data/questions" を import しない(全問データがクライアントバンドルに入る)。
 // マスター定義は certs.ts、問題データは question-loader.ts の動的 import で取得する。
 import {
@@ -574,7 +575,7 @@ function StartScreen({
 
       {/* 関連サービス: シカクモンスタジオ(静かな二次導線。主役の本番形式ボタンより下・琥珀は使わず bg-surface) */}
       <a
-        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=home_card&exam=${encodeURIComponent(cert.name)}`}
+        href={`${studioBaseUrl(cert.id)}?utm_source=eisei&utm_medium=referral&utm_content=home_card&exam=${encodeURIComponent(cert.name)}`}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => track("studio_cta_click", { placement: "home" })}
@@ -906,6 +907,38 @@ function ResultScreen({
         </div>
       )}
 
+      {/* 結果のシェア(テキストのみ。画像生成やSNS埋め込みはしない)。
+          注意: この画面の `name` は受験者が入力した氏名なので資格名には使えない。 */}
+      {(() => {
+        const certName = certById(certId)!.name;
+        const shareUrl = `${SITE.url}/${certId}/`;
+        const shareText = `${certName}の${label.includes("本番形式") ? "本番形式" : "演習"}で${percent}点（合格ライン${passLine}%）${passed ? "・合格圏" : ""}でした。${SITE.name}で無料演習中`;
+        return (
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <span className="text-[11px] text-ink-faint">この結果をシェア：</span>
+            <a
+              href={`https://x.com/intent/post?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => track("share_click", { cert: certId, channel: "x" })}
+              className="text-[12px] text-accent-ink border border-accent/40 rounded-[6px] px-3 py-1.5 no-underline transition hover:bg-accent-wash"
+            >
+              Xに投稿する
+            </a>
+            <a
+              href={`https://line.me/R/share?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => track("share_click", { cert: certId, channel: "line" })}
+              className="text-[12px] border rounded-[6px] px-3 py-1.5 no-underline transition hover:bg-line/40"
+              style={{ color: "#06C755", borderColor: "#06C755" }}
+            >
+              LINEで送る
+            </a>
+          </div>
+        );
+      })()}
+
       {/* 講座アフィリ(資格別。A8提携後に affiliate.ts へリンクを設定すると点灯) */}
       <CourseAffiliateCTA certId={certId} placement="quiz_result" className="mt-6" />
 
@@ -913,7 +946,7 @@ function ResultScreen({
           注意: この画面の `name` は受験者が入力した氏名なので資格名には使えない。
           資格名は certId から引く(着地先で ?exam= がお試し生成の初期値になる)。 */}
       <a
-        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=result_cta&exam=${encodeURIComponent(certById(certId)!.name)}`}
+        href={`${studioBaseUrl(certId)}?utm_source=eisei&utm_medium=referral&utm_content=result_cta&exam=${encodeURIComponent(certById(certId)!.name)}`}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => track("studio_cta_click", { placement: "result" })}

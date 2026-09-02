@@ -32,6 +32,7 @@ import { MOSHI_EXTRA_QUESTIONS } from "@/data/moshi-extra-questions";
 import MoshiFormatFeedback from "@/components/MoshiFormatFeedback";
 import CourseAffiliateCTA from "@/components/CourseAffiliateCTA";
 import { SITE } from "@/data/site";
+import { studioBaseUrl } from "@/lib/studio-lp";
 
 // 5本目の選択肢の挿入位置(全員同一の紙面になるよう問題IDから決定的に算出)
 function insertPos(id: string): number {
@@ -68,7 +69,7 @@ const catName = (id: string) => CATEGORIES.find((c) => c.id === id)?.name ?? id;
  *
  * utm_medium は GA4 のチャネル判定キーなので referral 固定。配置は utm_content。
  */
-function studioHref(examName: string, weakField: string | null): string {
+function studioHref(certId: CertId, examName: string, weakField: string | null): string {
   const params = new URLSearchParams({
     utm_source: "eisei",
     utm_medium: "referral",
@@ -77,7 +78,7 @@ function studioHref(examName: string, weakField: string | null): string {
   });
   // 分野名はそのまま検索語として使われるので長すぎるものは切る
   if (weakField) params.set("theme", weakField.slice(0, 40));
-  return `${SITE.studioUrl}?${params.toString()}`;
+  return `${studioBaseUrl(certId)}?${params.toString()}`;
 }
 
 export default function MoshiExam({
@@ -489,20 +490,35 @@ export default function MoshiExam({
           合格基準は{def.passLabel}。所要時間 約{result?.elapsedMin ?? def.timeLimitMin}分。
           ※この判定はオリジナル問題による目安です。
         </p>
-        {/* 結果のシェア(テキストのみ) */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-          <a
-            href={`https://x.com/intent/post?text=${encodeURIComponent(
-              `${cert.name}の模擬試験(第${def.round}回)で${score}/${questions.length}問正解(${pct}%)${passed ? "・合格圏" : ""}でした。${SITE.name}で無料受験中`
-            )}&url=${encodeURIComponent(`${SITE.url}/${certId}/moshi/`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => track("share_click", { cert: certId, channel: "x", place: "moshi" })}
-            className="text-[12px] text-accent-ink border border-accent/40 rounded-[6px] px-3 py-1.5 no-underline transition hover:bg-accent-wash"
-          >
-            この結果をXに投稿する
-          </a>
-        </div>
+        {/* 結果のシェア(テキストのみ)。X に加えて LINE も置く:
+            受験者層はスマホ中心で、勉強仲間・同僚との共有は X より LINE が多い。 */}
+        {(() => {
+          const shareText = `${cert.name}の模擬試験(第${def.round}回)で${score}/${questions.length}問正解(${pct}%)${passed ? "・合格圏" : ""}でした。${SITE.name}で無料受験中`;
+          const shareUrl = `${SITE.url}/${certId}/moshi/`;
+          return (
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+              <a
+                href={`https://x.com/intent/post?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track("share_click", { cert: certId, channel: "x", place: "moshi" })}
+                className="text-[12px] text-accent-ink border border-accent/40 rounded-[6px] px-3 py-1.5 no-underline transition hover:bg-accent-wash"
+              >
+                この結果をXに投稿する
+              </a>
+              <a
+                href={`https://line.me/R/share?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track("share_click", { cert: certId, channel: "line", place: "moshi" })}
+                className="text-[12px] border rounded-[6px] px-3 py-1.5 no-underline transition hover:bg-line/40"
+                style={{ color: "#06C755", borderColor: "#06C755" }}
+              >
+                LINEで送る
+              </a>
+            </div>
+          );
+        })()}
       </section>
 
       {/* 本試験経験者への形式アンケート(出題形式の一次情報収集) */}
@@ -575,7 +591,7 @@ export default function MoshiExam({
           塗らずに bg-surface で静かに置く)。弱点分野を ?theme= で引き継ぐので、
           着地先で入力し直さずにその分野の問題を作れる。 */}
       <a
-        href={studioHref(cert.name, weakest ? catName(weakest[0]) : null)}
+        href={studioHref(certId, cert.name, weakest ? catName(weakest[0]) : null)}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => track("studio_cta_click", { placement: "moshi_result" })}

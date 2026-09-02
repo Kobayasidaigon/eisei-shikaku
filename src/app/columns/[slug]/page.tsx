@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { COLUMNS, columnBySlug, columnDates, type Column } from "@/data/columns";
 import { categoriesOfCert, certById, categoryName, homeCertOfCategory, questionsOf, questionsOfCert, QUESTIONS } from "@/data/questions";
 import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
+import { studioBaseUrl } from "@/lib/studio-lp";
 import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
 import ColumnScrollPing from "@/components/ColumnScrollPing";
@@ -320,7 +321,7 @@ export default async function ColumnArticle({
 
       {/* 姉妹サービス: シカクモンスタジオ(記事末の二次導線。主役は上のドリルCTA、琥珀は使わない) */}
       <a
-        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=column_footer${
+        href={`${studioBaseUrl((cert ?? drillCert)?.id)}?utm_source=eisei&utm_medium=referral&utm_content=column_footer${
           (cert ?? drillCert) ? `&exam=${encodeURIComponent((cert ?? drillCert)!.name)}` : ""
         }`}
         target="_blank"

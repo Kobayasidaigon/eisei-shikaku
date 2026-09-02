@@ -48,6 +48,32 @@ export default function SiteFooter() {
             シカクモンスタジオ(AIで自分専用の問題集)→
           </a>
         </div>
+        {/* 姉妹サイト(系列内の回遊)。utm_medium は GA4 のチャネル判定キーなので referral 固定
+            (独自値だと Unassigned に落ちる)。配置は utm_content で区別する。 */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-faint">
+          <span>姉妹サイト</span>
+          <a
+            href="https://shikakumon.com/?utm_source=eisei&utm_medium=referral&utm_content=footer"
+            className="hover:text-accent transition"
+            title="法務・IT系13資格の練習問題"
+          >
+            シカクモン
+          </a>
+          <a
+            href="https://setsubi.shikakumon.com/?utm_source=eisei&utm_medium=referral&utm_content=footer"
+            className="hover:text-accent transition"
+            title="電気工事士・電験三種など"
+          >
+            設備資格ドリル
+          </a>
+          <a
+            href="https://kintore.shikakumon.com/?utm_source=eisei&utm_medium=referral&utm_content=footer"
+            className="hover:text-accent transition"
+            title="NSCA-CPTなど"
+          >
+            筋トレ資格ドリル
+          </a>
+        </div>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-ink-faint">
           <Link href="/about/" className="hover:text-accent transition">
             運営者情報・編集方針
