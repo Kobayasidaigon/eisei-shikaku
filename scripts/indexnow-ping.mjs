@@ -11,7 +11,10 @@
 const HOST = "eisei.shikakumon.com";
 // 本サイト専用の IndexNow キー。public/{KEY}.txt に同じ文字列を置いてある。
 // (キーはサイトごとに固有にする必要があるため、姉妹サイトのものを流用しないこと)
-const KEY = "c91787eb780ae215b000ded4d9b8bac6";
+// Bing Webmaster Tools の IndexNow 画面で発行したキー(2026-09-03)。
+// 旧キーでは SiteVerificationNotCompleted で弾かれたため差し替えた。
+// 3サイトで同一キーを共用する(各ホストに同名の .txt を置けば仕様上問題ない)。
+const KEY = "f57ad98a989b48989e4b0a887481b31f";
 const SITEMAP_URL = `https://${HOST}/sitemap.xml`;
 const ENDPOINT = "https://api.indexnow.org/indexnow";
 
