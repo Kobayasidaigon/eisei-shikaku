@@ -52,7 +52,7 @@ const CURATED_COLUMNS: Column[] = [
     slug: "eisei1-kakomon",
     certId: "eisei1",
     publishedAt: "2026-08-30",
-    related: ["eisei1-nanido", "eisei1-tokurei", "eisei2-kakomon", "eisei1-yugai"],
+    related: ["eisei1-nanido", "eisei1-benkyouhou", "eisei1-tokurei", "eisei1-yugai"],
     drill: { certId: "eisei1", categoryId: "e1-hourei-yugai" },
     title: "第一種衛生管理者の過去問はどこで手に入る?公表問題の入手先と無料1,000問の使い方",
     shortTitle: "第一種の過去問と無料演習",
@@ -125,7 +125,7 @@ const CURATED_COLUMNS: Column[] = [
     slug: "eisei1-nanido",
     certId: "eisei1",
     publishedAt: "2026-08-30",
-    related: ["eisei1-kakomon", "eisei1-tokurei", "eisei2-nanido", "eisei2-daiisshu-hikaku"],
+    related: ["eisei1-kakomon", "eisei1-benkyouhou", "eisei1-tokurei", "eisei2-nanido"],
     drill: { certId: "eisei1", categoryId: "e1-eisei-yugai" },
     title: "第一種衛生管理者の難易度と合格率|落ちる原因の大半は有害業務の2科目",
     shortTitle: "第一種の難易度と合格率",
@@ -158,8 +158,8 @@ const CURATED_COLUMNS: Column[] = [
         body: "合格基準には「各範囲40%以上」という足切りがあります。たとえば有害業務に係る関係法令(80点)で32点を下回ると、他が満点でも不合格です。苦手科目を捨てて得意科目で稼ぐ戦い方ができない試験なので、全範囲を最低ラインまで底上げしたうえで、配点の大きい有害業務を伸ばす順番で仕上げてください。",
       },
       {
-        heading: "勉強時間の目安は60〜100時間",
-        body: "初学者の勉強時間は一般に60〜100時間程度が目安といわれます。1日1時間なら2〜3か月です。暗記中心の試験なので、短期集中で詰めて試験日を早めに設定するほうが、長期戦でだらだら進めるより忘却が少なく効率的です。試験は毎月実施されているため、仕上がりに合わせて受験日を選べます。",
+        heading: "勉強時間の目安は100〜150時間",
+        body: "初学者の勉強時間は一般に100〜150時間程度が目安といわれます。1日1時間なら3〜5か月です。暗記中心の試験なので、短期集中で詰めて試験日を早めに設定するほうが、長期戦でだらだら進めるより忘却が少なく効率的です。試験は毎月実施されているため、仕上がりに合わせて受験日を選べます。",
       },
       {
         heading: "科目別の攻略順: 生理→共通→有害",
