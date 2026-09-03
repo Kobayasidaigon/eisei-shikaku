@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
+import { CompactCourseCTA } from "@/components/CourseAffiliateCTA";
 import { AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import { COLUMNS } from "@/data/columns";
 import { topicOf } from "@/data/topics";
@@ -237,6 +238,15 @@ export default async function QuestionPage({
       </nav>
 
       {/* 演習モードへのCTA */}
+      {/* 解説を読み終えた直後に置く。従来は採点結果画面にしか出しておらず、
+          問題ページを回遊するだけの読者にはCTAが一度も見えていなかった。 */}
+      <CompactCourseCTA
+        certId={cert.id}
+        placement="question_explanation"
+        lead={`${cert.name}の出題範囲を体系的に対策する`}
+        className="mt-8"
+      />
+
       <Link
         href={`/${cert.id}/`}
         className="block mt-8 rounded-[10px] bg-ink text-paper px-5 py-4 text-center no-underline transition hover:bg-accent"

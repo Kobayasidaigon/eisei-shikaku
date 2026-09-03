@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import JsonLd from "@/components/JsonLd";
+import { CompactCourseCTA } from "@/components/CourseAffiliateCTA";
 import AuthorBox from "@/components/AuthorBox";
 import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import { topicOf } from "@/data/topics";
@@ -235,6 +236,13 @@ export default async function CategoryPage({
           </ul>
         </section>
       )}
+
+      <CompactCourseCTA
+        certId={cert.id}
+        placement="category_bottom"
+        lead={`${cert.name}の対策講座を見る`}
+        className="mt-9"
+      />
 
       {/* この資格の勉強法・過去問ガイド(記事→コラムの逆リンクでクラスタを閉じる) */}
       {relatedColumns.length > 0 && (
