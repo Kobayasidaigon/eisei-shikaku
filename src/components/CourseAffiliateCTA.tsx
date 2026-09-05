@@ -68,32 +68,57 @@ export default function CourseAffiliateCTA({
   const impressionRef = useCtaImpression<HTMLDivElement>(placement, target?.course);
   if (!target) return null;
 
-  const hasFree = Boolean(target.freeHref);
+  // 2026-09-05: SMART合格講座(無料登録=低摩擦・講座ページ=有料の第2候補)を併載。
+  // 無料カードは SMART 無料登録があればそれを主、LEC 資料請求を同カード内の副リンクにする
+  // (本体で SMART 無料登録の CVR 実績がある)。無ければ従来どおり LEC 資料請求が主。
+  const smartCourse = `${target.course}_smart`;
+  const freeMain = target.smartFreeHref
+    ? { href: target.smartFreeHref, label: target.smartFreeLabel ?? "無料登録して講座を試し見る", course: smartCourse, body: "無料登録すると講義の一部をその場で試し見できます。自分に合う教材か確かめてから決められます。" }
+    : target.freeHref
+      ? { href: target.freeHref, label: target.freeLabel ?? "資料請求で講座を無料体験する", course: target.course, body: "テキストや講義のサンプルを取り寄せて、自分に合う教材か確かめてから決められます。" }
+      : null;
+  const freeSub = target.smartFreeHref && target.freeHref
+    ? { href: target.freeHref, label: target.freeLabel ?? "資料請求で講座を無料体験する", course: target.course }
+    : null;
   const hasPaid = Boolean(target.href);
-  if (!hasFree && !hasPaid) return null;
+  const paidSub = target.smartHref ? { href: target.smartHref, label: target.smartLabel ?? "SMART合格講座を見る", course: smartCourse } : null;
+  if (!freeMain && !hasPaid) return null;
 
   return (
     <div className={className} ref={impressionRef}>
-      {hasFree && <A8Imp href={target.freeHref} />}
+      {target.freeHref && <A8Imp href={target.freeHref} />}
       {hasPaid && <A8Imp href={target.href} />}
-      {/* 低摩擦オファー(資料請求・無料体験)。設定されていれば有料講座より先に置く */}
-      {hasFree && (
-        <a
-          href={target.freeHref}
-          target="_blank"
-          rel="nofollow sponsored noopener noreferrer"
-          onClick={() => track("free_lead_click", { placement, course: target.course })}
-          className="block rounded-[12px] border border-accent/40 bg-accent-wash p-5 transition hover:border-accent no-underline"
-        >
-          <div className="text-[11px] tracked text-accent-ink">まずは無料で試す【PR】</div>
-          <div className="font-serif text-[16px] font-medium text-ink mt-1">
-            {target.freeLabel ?? "資料請求で講座を無料体験する"}
-          </div>
-          <p className="text-[12px] text-ink-soft mt-1.5 leading-relaxed">
-            テキストや講義のサンプルを取り寄せて、自分に合う教材か確かめてから決められます。
-          </p>
-          <span className="inline-block mt-3 text-[13px] text-accent">無料で申し込む →</span>
-        </a>
+      {(target.smartFreeHref || target.smartHref) && <A8Imp href={target.smartFreeHref ?? target.smartHref} />}
+      {/* 低摩擦オファー(無料登録・資料請求)。設定されていれば有料講座より先に置く */}
+      {freeMain && (
+        <div className="rounded-[12px] border border-accent/40 bg-accent-wash p-5">
+          <a
+            href={freeMain.href}
+            target="_blank"
+            rel="nofollow sponsored noopener noreferrer"
+            onClick={() => track("free_lead_click", { placement, course: freeMain.course })}
+            className="block no-underline"
+          >
+            <div className="text-[11px] tracked text-accent-ink">まずは無料で試す【PR】</div>
+            <div className="font-serif text-[16px] font-medium text-ink mt-1">{freeMain.label}</div>
+            <p className="text-[12px] text-ink-soft mt-1.5 leading-relaxed">{freeMain.body}</p>
+            <span className="inline-block mt-3 text-[13px] text-accent">無料で申し込む →</span>
+          </a>
+          {freeSub && (
+            <p className="mt-3 pt-3 border-t border-accent/30 text-[12px] text-ink-soft leading-relaxed">
+              紙の資料で比べたい方は
+              <a
+                href={freeSub.href}
+                target="_blank"
+                rel="nofollow sponsored noopener noreferrer"
+                onClick={() => track("free_lead_click", { placement: `${placement}_sub`, course: freeSub.course })}
+                className="ml-1.5 text-accent underline underline-offset-2 hover:text-accent-ink"
+              >
+                {freeSub.label} →
+              </a>
+            </p>
+          )}
+        </div>
       )}
 
       {/* 有料講座 */}
@@ -104,7 +129,7 @@ export default function CourseAffiliateCTA({
           rel="nofollow sponsored noopener noreferrer"
           onClick={() => track("course_click", { placement, course: target.course })}
           className={`block rounded-[12px] bg-accent text-white p-5 transition hover:bg-accent-ink no-underline ${
-            hasFree ? "mt-3" : ""
+            freeMain ? "mt-3" : ""
           }`}
         >
           <div className="text-[11px] tracked text-paper/70">弱点が見えた今がチャンス【PR】</div>
@@ -114,6 +139,22 @@ export default function CourseAffiliateCTA({
           </p>
           <span className="inline-block mt-3 text-[13px] underline underline-offset-2">講座を見る →</span>
         </a>
+      )}
+      {/* 有料講座の第2候補(SMART)。カードは増やさず1行で添える */}
+      {paidSub && (
+        <p className="mt-2 text-[12px] text-ink-soft leading-relaxed">
+          <span className="text-[10px] text-ink-faint mr-1.5">【PR】</span>
+          スマホ完結で安く済ませたい方は
+          <a
+            href={paidSub.href}
+            target="_blank"
+            rel="nofollow sponsored noopener noreferrer"
+            onClick={() => track("course_click", { placement: `${placement}_sub`, course: paidSub.course })}
+            className="ml-1.5 text-accent underline underline-offset-2 hover:text-accent-ink"
+          >
+            {paidSub.label} →
+          </a>
+        </p>
       )}
     </div>
   );
@@ -136,26 +177,49 @@ export function CompactCourseCTA({
   className?: string;
 }) {
   const target = CERT_AFFILIATE[certId];
-  const impressionRef = useCtaImpression<HTMLAnchorElement>(placement, target?.course);
+  const impressionRef = useCtaImpression<HTMLDivElement>(placement, target?.course);
   if (!target?.href) return null;
 
+  // 2026-09-05: 問題ページ・分野ページ(約1,000面)にも低摩擦の無料登録(SMART)を1行添える。
+  // 従来は有料講座リンクだけで、無料オファーが結果画面にしか出ていなかった。
+  const free = target.smartFreeHref
+    ? { href: target.smartFreeHref, label: target.smartFreeLabel ?? "無料登録して講座を試し見る", course: `${target.course}_smart` }
+    : null;
+
   return (
-    <a
-      ref={impressionRef}
-      href={target.href}
-      target="_blank"
-      rel="nofollow sponsored noopener noreferrer"
-      onClick={() => track("course_click", { placement, course: target.course })}
-      className={`block rounded-[10px] border border-accent/40 bg-accent-wash px-4 py-3.5 transition hover:border-accent no-underline ${className}`}
-    >
-      <div className="text-[13px] text-ink leading-relaxed">
-        {lead}
-        <span className="text-[10px] text-ink-faint ml-1.5">【PR】</span>
-      </div>
-      <span className="inline-block mt-1 text-[13px] text-accent font-medium">
-        {target.label} →
-      </span>
+    <div ref={impressionRef} className={className}>
+      <a
+        href={target.href}
+        target="_blank"
+        rel="nofollow sponsored noopener noreferrer"
+        onClick={() => track("course_click", { placement, course: target.course })}
+        className="block rounded-[10px] border border-accent/40 bg-accent-wash px-4 py-3.5 transition hover:border-accent no-underline"
+      >
+        <div className="text-[13px] text-ink leading-relaxed">
+          {lead}
+          <span className="text-[10px] text-ink-faint ml-1.5">【PR】</span>
+        </div>
+        <span className="inline-block mt-1 text-[13px] text-accent font-medium">
+          {target.label} →
+        </span>
+      </a>
+      {free && (
+        <p className="mt-1.5 px-1 text-[12px] text-ink-soft leading-relaxed">
+          <span className="text-[10px] text-ink-faint mr-1.5">【PR】</span>
+          まず講義を無料で試すなら
+          <a
+            href={free.href}
+            target="_blank"
+            rel="nofollow sponsored noopener noreferrer"
+            onClick={() => track("free_lead_click", { placement, course: free.course })}
+            className="ml-1.5 text-accent underline underline-offset-2 hover:text-accent-ink"
+          >
+            {free.label} →
+          </a>
+        </p>
+      )}
       <A8Imp href={target.href} />
-    </a>
+      {free && <A8Imp href={free.href} />}
+    </div>
   );
 }

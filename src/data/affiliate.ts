@@ -32,7 +32,27 @@ export interface AffiliateTarget {
    */
   freeHref?: string;
   freeLabel?: string;
+
+  /**
+   * ★SMART合格講座(全日本情報学習振興協会・A8 4B1TI0系)。2026-09-05 追加。
+   * A8 のプログラム詳細(ユーザー確認)で「衛生管理者」が成果報酬対象講座に明記されている。
+   * 本体シカクモンで承認済みの提携リンク(どこでもリンク形式)に着地先だけ指定して使う。
+   * a8mat は提携(メディア)単位で副サイト別には発行されない(SAT で実測済み)。
+   * 本サイトは A8 の副サイトとして登録済みで、広告リンク作成画面の掲載サイトに出る。
+   *
+   * smartFreeHref = 無料登録(講義の一部を試し見できる)。本体で CVR 7.5% の実績があり、
+   *   LEC の資料請求(100円)より前に置く低摩擦オファー。
+   * smartHref     = 衛生管理者講座ページ(有料)。SAT の第2候補として併載する。
+   */
+  smartHref?: string;
+  smartLabel?: string;
+  smartFreeHref?: string;
+  smartFreeLabel?: string;
 }
+
+const SMART_A8 = "https://px.a8.net/svt/ejp?a8mat=4B1TI0+9T22IA+4LOQ+BW8O2&a8ejpredirect=";
+const SMART_FREE = `${SMART_A8}${encodeURIComponent("https://www.joho-gakushu.jp/smart/registfree.php")}`;
+const SMART_EISEI = `${SMART_A8}${encodeURIComponent("https://www.joho-gakushu.or.jp/eiseikanrisya/")}`;
 
 // 2026-08-06実装: 本サイトをA8のサイトとして登録済み(ユーザー実施)。リンクは
 // 既提携SAT(現場系eラーニング・購入10%・衛生管理者講座あり)の商品リンク型で、
@@ -50,6 +70,10 @@ export const CERT_AFFILIATE: Record<CertId, AffiliateTarget> = {
     course: "eisei1",
     freeHref: "https://px.a8.net/svt/ejp?a8mat=4B9ZDE+3TJA5E+1G62+64JTE",
     freeLabel: "LECの講座案内資料を無料で請求する",
+    smartHref: SMART_EISEI,
+    smartLabel: "第一種衛生管理者のSMART合格講座を見る",
+    smartFreeHref: SMART_FREE,
+    smartFreeLabel: "無料登録してSMART合格講座を試し見る",
   },
   eisei2: {
     href: "https://px.a8.net/svt/ejp?a8mat=4B9X1E+FFHK1M+5TRO+BW8O2&a8ejpredirect=https%3A%2F%2Fwww.sat-co.info%2Fec%2Feiseikanrisya",
@@ -57,6 +81,10 @@ export const CERT_AFFILIATE: Record<CertId, AffiliateTarget> = {
     course: "eisei2",
     freeHref: "https://px.a8.net/svt/ejp?a8mat=4B9ZDE+3TJA5E+1G62+64JTE",
     freeLabel: "LECの講座案内資料を無料で請求する",
+    smartHref: SMART_EISEI,
+    smartLabel: "第二種衛生管理者のSMART合格講座を見る",
+    smartFreeHref: SMART_FREE,
+    smartFreeLabel: "無料登録してSMART合格講座を試し見る",
   },
 };
 
