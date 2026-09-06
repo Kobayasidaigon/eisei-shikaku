@@ -7,6 +7,7 @@ import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
 import ColumnScrollPing from "@/components/ColumnScrollPing";
+import CourseAffiliateCTA from "@/components/CourseAffiliateCTA";
 
 export function generateStaticParams() {
   return COLUMNS.map((c) => ({ slug: c.slug }));
@@ -232,6 +233,11 @@ export default async function ColumnArticle({
           </section>
         ))}
       </div>
+
+      {/* 講座CTA(2026-09-05 追加)。コラム25本の末尾に LEC 資料請求(無料)・SAT 講座のどちらも
+          出ておらず、検索着地の多い読み物面でアフィリ露出がゼロだった。結果画面と同じ
+          コンポーネント(無料→有料の順)をそのまま置く。資格が特定できない記事は第二種を既定にする */}
+      <CourseAffiliateCTA certId={c.certId ?? drill?.certId ?? "eisei2"} placement="column_end" className="mt-9" />
 
       {/* ドリルへのCTA(資格別入口 or 記事内容に対応する分野別一問一答へ。アンカーテキストに資格名・分野名を含める) */}
       <div className="mt-9 rounded-[12px] border border-line-strong bg-surface p-5 sm:p-6">
