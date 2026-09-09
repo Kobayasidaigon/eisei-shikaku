@@ -8,7 +8,7 @@ import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import { COLUMNS } from "@/data/columns";
 import { moshiDefFor } from "@/data/moshi";
 import { moshi2ProductOf } from "@/data/products";
-import Moshi2TopLink from "@/components/Moshi2TopLink";
+import Moshi2TopCard from "@/components/Moshi2TopCard";
 import {
   CERTS,
   certById,
@@ -174,7 +174,7 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
 
       {/* 模擬試験への導線(模試定義がある試験のみ) */}
       {moshiDefFor(cert.id) && (
-        <div className="mb-6 bg-surface border border-line rounded-[10px] p-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-4 bg-surface border border-line rounded-[10px] p-4 flex flex-wrap items-center justify-between gap-3">
           <p className="text-[13px] text-ink-soft leading-relaxed">
             時間を計って本番さながらに解くなら、固定{moshiDefFor(cert.id)!.questionIds.length}問・
             {moshiDefFor(cert.id)!.timeLimitMin}分・合否判定つきの模擬試験へ。
@@ -185,20 +185,19 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
           >
             模擬試験 第1回を受ける →
           </Link>
-          {moshi2ProductOf(cert.id) && (
-            <Moshi2TopLink
-              certId={cert.id}
-              priceJpy={moshi2ProductOf(cert.id)!.priceJpy}
-              className="rounded-[8px] border border-line-strong px-4 py-2 text-[13px] text-ink no-underline transition-colors hover:border-accent hover:text-accent-ink shrink-0"
-            />
-          )}
-          {moshi2ProductOf(cert.id) && (
-            <p className="w-full border-t border-line pt-3 text-[12px] text-ink-faint leading-relaxed">
-              第2回は第1回と1問も重複しない別問題で、印刷用の紙面つきの買い切りです。
-              商品ページにサンプル問題を解説つきで2問出しているので、中身を見てから決められます。
-            </p>
-          )}
         </div>
+      )}
+
+      {/* 第2回(有料)は、無料の第1回と同じ行に並べない。
+          並置していた間は表示519人に対しクリック6人(1.2%)で、有料が無料の陰に隠れていた。
+          クリック後は checkout 83%・購入80%と高いので、詰まりは価格でも決済でもなく置き方。 */}
+      {moshiDefFor(cert.id) && moshi2ProductOf(cert.id) && (
+        <Moshi2TopCard
+          certId={cert.id}
+          priceJpy={moshi2ProductOf(cert.id)!.priceJpy}
+          questionCount={moshi2ProductOf(cert.id)!.questionCount}
+          timeLimitMin={moshi2ProductOf(cert.id)!.timeLimitMin}
+        />
       )}
 
       {/* そのまま演習開始できるクイズ本体 */}

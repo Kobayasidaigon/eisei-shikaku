@@ -6,6 +6,11 @@
  * 置き場所として一番効くのは第1回模試の結果画面。点数と弱点を見た直後が、
  * 「もう1回分やりたい」の動機がいちばん強い瞬間のため。
  * 表示・クリックを GA で計測し、どの設置場所が効いたかを見る。
+ *
+ * 【パラメータ名】設置場所は `placement` で送る。`place` で送っていた間は
+ *   GA4 のカスタム定義に登録されている名前(placement)と食い違っていたため、
+ *   設置場所別にクリック率を分解できなかった。studio_cta_click など他の
+ *   イベントも placement を使っているので、名前はここに揃える。
  */
 
 import Link from "next/link";
@@ -21,12 +26,12 @@ function track(name: string, params?: Record<string, unknown>) {
 
 export default function Moshi2Offer({
   certId,
-  place,
+  placement,
   className = "",
 }: {
   certId: CertId;
-  /** GA で設置場所を区別する(moshi_result / cert_top など) */
-  place: string;
+  /** GA4 で設置場所を区別する(moshi_result / cert_top など) */
+  placement: string;
   className?: string;
 }) {
   const product = moshi2ProductOf(certId);
@@ -40,14 +45,14 @@ export default function Moshi2Offer({
       (entries) => {
         if (fired.current || !entries.some((e) => e.isIntersecting)) return;
         fired.current = true;
-        track("moshi2_offer_impression", { cert: certId, place });
+        track("moshi2_offer_impression", { cert: certId, placement });
         io.disconnect();
       },
       { threshold: 0.5 }
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [certId, place, product]);
+  }, [certId, placement, product]);
 
   if (!product) return null;
 
@@ -67,7 +72,7 @@ export default function Moshi2Offer({
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/${certId}/moshi2/`}
-          onClick={() => track("moshi2_offer_click", { cert: certId, place })}
+          onClick={() => track("moshi2_offer_click", { cert: certId, placement })}
           className="bg-ink text-paper rounded-[8px] px-4 py-2.5 text-[13px] no-underline hover:bg-accent transition-colors"
         >
           第2回を見る(¥{product.priceJpy.toLocaleString()}) →

@@ -631,7 +631,7 @@ export default function MoshiExam({
 
       {/* 販売中なら購入導線、まだ無ければ「制作中」。両方出すと矛盾するため排他にする。 */}
       {moshi2ProductOf(certId) ? (
-        <Moshi2Offer certId={certId} place="moshi_result" className="mb-5" />
+        <Moshi2Offer certId={certId} placement="moshi_result" className="mb-5" />
       ) : (
         <p className="text-[12px] text-ink-faint mb-5">第2回の模擬試験は現在制作中です。</p>
       )}
