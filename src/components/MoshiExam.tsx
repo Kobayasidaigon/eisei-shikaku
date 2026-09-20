@@ -629,12 +629,27 @@ export default function MoshiExam({
         </div>
       </section>
 
-      {/* 販売中なら購入導線、まだ無ければ「制作中」。両方出すと矛盾するため排他にする。 */}
-      {moshi2ProductOf(certId) ? (
-        <Moshi2Offer certId={certId} placement="moshi_result" className="mb-5" />
-      ) : (
-        <p className="text-[12px] text-ink-faint mb-5">第2回の模擬試験は現在制作中です。</p>
-      )}
+      {/* 販売中なら購入導線、まだ無ければ「制作中」。両方出すと矛盾するため排他にする。
+          第2回そのものを受けている画面では出さない(def.round === 1 の条件。2026-09-20 追加)。 */}
+      {def.round === 1 &&
+        (moshi2ProductOf(certId) ? (
+          <Moshi2Offer
+            certId={certId}
+            placement="moshi_result"
+            className="mb-5"
+            result={{
+              passed,
+              gap: def.passCount - score,
+              unit: "問",
+              passLine: def.passCount,
+              scale: questions.length,
+              worstCategory: weakest ? catName(weakest[0]) : undefined,
+              worstPct: weakest ? Math.round((weakest[1].correct / weakest[1].total) * 100) : undefined,
+            }}
+          />
+        ) : (
+          <p className="text-[12px] text-ink-faint mb-5">第2回の模擬試験は現在制作中です。</p>
+        ))}
 
       <div className="flex flex-wrap items-center gap-4">
         <button

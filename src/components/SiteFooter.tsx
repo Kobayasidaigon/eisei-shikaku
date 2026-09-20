@@ -55,6 +55,9 @@ export default function SiteFooter() {
           <Link href="/privacy/" className="hover:text-accent transition">
             プライバシーポリシー
           </Link>
+          <Link href="/legal/" className="hover:text-accent transition">
+            特定商取引法に基づく表示
+          </Link>
           <Link href="/contact/" className="hover:text-accent transition">
             お問い合わせ
           </Link>

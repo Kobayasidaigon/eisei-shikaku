@@ -52,6 +52,12 @@ export type Moshi2Product = {
   categoryCounts?: Record<string, number>;
   /** 仕様の根拠と本試験との差異(正直に書く) */
   specNote: string;
+  /**
+   * 公式発表済みの今後の試験日(YYYY-MM-DD、JST)。結果画面のオファーと販売ページに
+   * 「本試験まで あとN日」を出すのに使う。今日以降の最も近い日を自動で選び、
+   * すべて過ぎたら行ごと消えるので、書き足すだけでよい。未確認の日付は入れないこと。
+   */
+  examDates?: readonly string[];
 };
 
 /** 第2回模試を販売する資格。ここに載っている資格だけ商品ページが生成される。 */

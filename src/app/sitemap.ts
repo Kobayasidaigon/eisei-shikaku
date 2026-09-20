@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/about/`, lastModified: trustPagesDate, changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/privacy/`, lastModified: trustPagesDate, changeFrequency: "yearly", priority: 0.2 },
     { url: `${base}/contact/`, lastModified: trustPagesDate, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${base}/legal/`, lastModified: new Date("2026-09-20"), changeFrequency: "yearly", priority: 0.2 },
   ];
 
   // 資格別入口ページ + 分野別一問一答ページ
