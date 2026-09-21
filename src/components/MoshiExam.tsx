@@ -25,6 +25,7 @@ import {
 import { loadCertQuestions } from "@/data/question-loader";
 import { moshi2ProductOf } from "@/data/products";
 import Moshi2Offer from "@/components/Moshi2Offer";
+import MoshiReminderForm from "@/components/MoshiReminderForm";
 import type { MoshiDef } from "@/data/moshi";
 import { moshiDefFor } from "@/data/moshi";
 import { EXTRA5 } from "@/data/moshi-extra5";
@@ -507,6 +508,28 @@ export default function MoshiExam({
 
       {/* 本試験経験者への形式アンケート(出題形式の一次情報収集) */}
       <MoshiFormatFeedback certId={certId} round={def.round} />
+
+      {/* 結果のまとめ + 試験日までの学習リマインド(メール登録)。2026-09-22 追加。
+          完了者との再接点をつくる。保存先は Studio の API(lib/moshi-reminder.ts)。
+          このサイトは第2回オファーが解説の下にあるので、形式アンケートの直後に置く。 */}
+      {def.round === 1 && (
+        <MoshiReminderForm
+          certId={certId}
+          certName={cert.name}
+          round={def.round}
+          score={score}
+          result={{
+            passed,
+            gap: def.passCount - score,
+            unit: "問",
+            passLine: def.passCount,
+            scale: questions.length,
+            worstCategory: weakest ? catName(weakest[0]) : undefined,
+            worstPct: weakest ? Math.round((weakest[1].correct / weakest[1].total) * 100) : undefined,
+          }}
+          moshi2Path={moshi2ProductOf(certId) ? `/${certId}/moshi2/` : null}
+        />
+      )}
 
       {/* 科目別の判定 */}
       {sectionStats.length > 0 && (
