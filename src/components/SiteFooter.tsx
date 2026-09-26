@@ -48,6 +48,14 @@ export default function SiteFooter() {
             シカクモンスタジオ(AIで自分専用の問題集)→
           </a>
         </div>
+        {/* 同じ作りの姉妹ドリル。新設サイトの発見経路にもなるため、全ページに置く */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-faint">
+          <span>姉妹サイト</span>
+          <a href={SITE.hubUrl} className="hover:text-accent transition">シカクモン(資格クイズ)</a>
+          <a href="https://setsubi.shikakumon.com/" className="hover:text-accent transition">設備資格ドリル</a>
+          <a href="https://kintore.shikakumon.com/" className="hover:text-accent transition">筋トレ資格ドリル</a>
+          <a href="https://sekokan.shikakumon.com/" className="hover:text-accent transition">施工管理ドリル</a>
+        </div>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-ink-faint">
           <Link href="/about/" className="hover:text-accent transition">
             運営者情報・編集方針
