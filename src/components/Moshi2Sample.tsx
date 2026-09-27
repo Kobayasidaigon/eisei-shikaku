@@ -14,6 +14,7 @@
 import { categoryName, type CategoryId } from "@/data/certs";
 import { loadMoshi2, shapeForDisplay } from "@/data/moshi2";
 import type { CertId } from "@/data/certs";
+import Moshi2ViewPing from "@/components/Moshi2ViewPing";
 
 export default async function Moshi2Sample({ certId }: { certId: CertId }) {
   const paper = await loadMoshi2(certId);
@@ -28,8 +29,15 @@ export default async function Moshi2Sample({ certId }: { certId: CertId }) {
   const second = qs.slice(1).find((q) => q.category !== first.category) ?? qs[mid];
   const picked = [first, second];
 
+  // id="sample" は結果画面のオファーの「サンプル問題を見る」リンク先。
+  // scroll-mt はヘッダー分のずれ防止。表示計測は moshi2_sample_open。
   return (
-    <section className="print-hide mb-5 max-w-xl">
+    <Moshi2ViewPing
+      event="moshi2_sample_open"
+      params={{ cert: certId }}
+      id="sample"
+      className="print-hide mb-6 max-w-xl scroll-mt-20"
+    >
       <h2 className="font-serif text-[17px] font-medium text-ink mb-1">サンプル問題</h2>
       <p className="text-[13px] text-ink-soft leading-relaxed mb-3">
         実際に出題される{paper.questions.length}問のうち2問を、解説までそのまま出します。
@@ -70,9 +78,8 @@ export default async function Moshi2Sample({ certId }: { certId: CertId }) {
       </div>
 
       <p className="text-[12px] text-ink-faint mt-3 leading-relaxed">
-        残りの{paper.questions.length - 2}問も同じ密度で解説を付けています。
-        無料の第1回とは1問も重複しません。
+        残りの{paper.questions.length - 2}問も同じ密度で解説しています。無料の第1回とは1問も重複しません。
       </p>
-    </section>
+    </Moshi2ViewPing>
   );
 }

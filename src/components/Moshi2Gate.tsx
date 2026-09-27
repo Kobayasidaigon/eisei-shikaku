@@ -17,30 +17,37 @@
  * サーバーが Stripe に照会して支払い済みを確認して初めて受験権になる。
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import MoshiExam from "@/components/MoshiExam";
 import type { CertId, Question } from "@/data/certs";
 import type { MoshiDef } from "@/data/moshi";
 import { moshi2ProductOf } from "@/data/products";
 import { SITE } from "@/data/site";
+import { daysToNextExam, trackMoshi2 as track, trackMoshi2Ecommerce } from "@/lib/moshi2-funnel";
 
 type Paper = { def: MoshiDef; questions: Question[]};
 type Status = "loading" | "locked" | "ready" | "notReady" | "error";
 
-function track(name: string, params?: Record<string, unknown>) {
-  if (typeof window === "undefined") return;
-  const w = window as unknown as { gtag?: (...args: unknown[]) => void };
-  w.gtag?.("event", name, params);
-}
-
-export default function Moshi2Gate({ certId }: { certId: CertId }) {
+/**
+ * 【2026-09-20 改修の要点】販売ページ到達→checkout が 0/75人(28日)だった。
+ *   ・価値を伝える節(誰向け/含まれるもの/サンプル/作問方針)は `pitch` としてサーバー側で
+ *     組み、未購入のときだけここで描く。購入済みの人には受験画面だけを出す。
+ *   ・価格ボックスは価値の後ろ。ボタンの直下は肯定形の安心3行だけにし、赤字の警告
+ *     (シークレットウィンドウ/回数制限/返金不可)は FAQ に移した。
+ *   ・計測: moshi2_page_view{src} / moshi2_price_view / moshi2_checkout_start(beacon) /
+ *     purchase(標準eコマース)。Stripe テストモードの購入は送らない。
+ */
+export default function Moshi2Gate({ certId, pitch }: { certId: CertId; pitch?: ReactNode }) {
   const product = moshi2ProductOf(certId);
   const [status, setStatus] = useState<Status>("loading");
   const [paper, setPaper] = useState<Paper | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [buying, setBuying] = useState(false);
   const [canceled, setCanceled] = useState(false);
+  const priceRef = useRef<HTMLElement | null>(null);
+  const priceSeen = useRef(false);
+  const pageViewSent = useRef(false);
 
   const fetchPaper = useCallback(async () => {
     const res = await fetch(`/api/moshi2/${certId}/`, { cache: "no-store" });
@@ -68,6 +75,22 @@ export default function Moshi2Gate({ certId }: { certId: CertId }) {
     (async () => {
       const params = new URLSearchParams(window.location.search);
       if (params.get("canceled") === "1") setCanceled(true);
+
+      // どこから来たか(result=第1回の結果画面 / landing=資格トップ / それ以外=direct)。
+      // 販売ページ到達64人のうち結果画面経由は6人だけ、という推定を確定させるための計測。
+      // 読んだら canonical を汚さないよう URL から消す(ハッシュ #sample は残す)。
+      // ref で1回に抑えるのは、開発時の StrictMode が effect を2度走らせ、2度目が
+      // (URL から src を消した後なので)direct として二重に数えられるのを防ぐため。
+      const src = params.get("src");
+      if (!pageViewSent.current) {
+        pageViewSent.current = true;
+        track("moshi2_page_view", { cert: certId, src: src ?? "direct" });
+      }
+      if (src) {
+        params.delete("src");
+        const q = params.toString();
+        window.history.replaceState({}, "", `/${certId}/moshi2/${q ? `?${q}` : ""}${window.location.hash}`);
+      }
 
       // 決済後に届くメールの受験用リンク(?k=署名トークン)。
       // 端末を変えた・cookieを消した場合の復旧口。決済からの復帰(?s=)より先に見る。
@@ -107,7 +130,12 @@ export default function Moshi2Gate({ certId }: { certId: CertId }) {
           const data = await res.json().catch(() => ({}));
           if (!alive) return;
           if (res.ok) {
-            track("moshi2_purchase_complete", { cert: certId });
+            // Stripe テストモードの決済(livemode=false)は GA4 に載せない。
+            // テスト購入が実売上と混ざると「売れた」と誤読するため。
+            if (data?.livemode !== false) {
+              track("moshi2_purchase_complete", { cert: certId });
+              trackMoshi2Ecommerce("purchase", product, { transaction_id: sessionId });
+            }
           } else {
             setMessage(data?.error ?? "決済の確認に失敗しました。");
           }
@@ -133,11 +161,31 @@ export default function Moshi2Gate({ certId }: { certId: CertId }) {
     };
   }, [certId, fetchPaper]);
 
+  // 価格ボックスが見えたら1回だけ moshi2_price_view。未購入表示のときだけ要素が存在する
+  useEffect(() => {
+    const el = priceRef.current;
+    if (!el || priceSeen.current || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (priceSeen.current || !entries.some((e) => e.isIntersecting)) return;
+        priceSeen.current = true;
+        track("moshi2_price_view", { cert: certId });
+        io.disconnect();
+      },
+      { threshold: 0.5 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [certId, status]);
+
   async function buy() {
     if (buying) return;
     setBuying(true);
     setMessage(null);
-    track("moshi2_checkout_start", { cert: certId });
+    // 直後に Stripe へ遷移するので beacon で送る(遷移で送信が打ち切られないように)。
+    // 実際には /api/checkout の往復を待ってから遷移するため、その間にも送り切れる。
+    track("moshi2_checkout_start", { cert: certId }, { beacon: true });
+    trackMoshi2Ecommerce("begin_checkout", product, undefined, { beacon: true });
     try {
       const res = await fetch("/api/checkout/", {
         method: "POST",
@@ -198,9 +246,12 @@ export default function Moshi2Gate({ certId }: { certId: CertId }) {
 
   if (status === "loading") {
     return (
-      <section className="bg-surface border border-line rounded-[10px] p-5 text-[13px] text-ink-soft">
-        読み込み中…
-      </section>
+      <>
+        {pitch}
+        <section className="bg-surface border border-line rounded-[10px] p-5 text-[13px] text-ink-soft">
+          読み込み中…
+        </section>
+      </>
     );
   }
 
@@ -219,60 +270,119 @@ export default function Moshi2Gate({ certId }: { certId: CertId }) {
   }
 
   /* ---------- 未購入 / エラー ---------- */
+  const days = daysToNextExam(product.examDates);
+  const price = `¥${product.priceJpy.toLocaleString()}`;
   return (
-    <section className="bg-surface border border-line rounded-[10px] p-5 sm:p-6">
-      {canceled && (
-        <p className="text-[12px] text-ink-faint mb-3">
-          決済を中断しました。もう一度お手続きいただけます。
+    <>
+      {pitch}
+
+      <section
+        ref={priceRef}
+        id="buy"
+        className="bg-surface border border-accent/40 rounded-[10px] p-5 sm:p-6 max-w-xl scroll-mt-20"
+      >
+        {canceled && (
+          <p className="text-[12px] text-ink-faint mb-3">
+            決済を中断しました。もう一度お手続きいただけます。
+          </p>
+        )}
+        {days != null && (
+          <p className="text-[12px] text-accent-ink tabular mb-2">本試験まで あと{days}日</p>
+        )}
+        <p className="font-serif text-[26px] font-medium text-ink leading-none mb-2">
+          {price}
+          <span className="text-[12px] text-ink-faint ml-2 font-sans">税込・買い切り</span>
         </p>
-      )}
-
-      <h2 className="font-serif text-[17px] font-medium text-ink mb-3">この模試に含まれるもの</h2>
-      <ul className="text-[13px] text-ink-soft leading-relaxed space-y-1.5 list-disc pl-5 mb-4">
-        <li>第1回とは完全に別問題の固定ペーパー。全員が同じ問題を同じ順序で解きます。</li>
-        <li>制限時間つきの本番形式。時間切れで自動採点されます。</li>
-        <li>採点後に合否判定・分野別の正答率・全問の解説。</li>
-        <li>間違えた問題は弱点として記録され、練習問題の復習に反映されます。</li>
-        <li>
-          <span className="text-ink">問題・解答用紙・解説を A4 に組んだ印刷用の紙面つき。</span>
-          画面で時間を計って解き、紙に書き込みながら復習できます(PDF保存も可)。
-        </li>
-        <li>買い切り。会員登録もサブスクリプションもありません。</li>
-      </ul>
-
-      <div className="border-t border-line pt-4">
-        <p className="font-serif text-[24px] font-medium text-ink leading-none mb-1">
-          ¥{product.priceJpy.toLocaleString()}
-          <span className="text-[12px] text-ink-faint ml-2 font-sans">買い切り・税込</span>
+        <p className="text-[13px] text-ink-soft leading-relaxed mb-1">
+          書店の問題集1冊分より低い価格で、本番形式の通し練習が1回分増えます。
         </p>
         <button
           onClick={buy}
           disabled={buying}
           className="mt-3 bg-ink text-paper rounded-[8px] px-5 py-2.5 text-[13px] hover:bg-accent transition-colors disabled:opacity-50"
         >
-          {buying ? "決済ページを準備中…" : "購入して受験する →"}
+          {buying ? "決済ページを準備中…" : `購入して受験する(${price})→`}
         </button>
-        <p className="text-[12px] text-ink-faint mt-3 leading-relaxed">
-          決済は Stripe で行われます。カード情報が当サイトに渡ることはありません。
-          購入後はこの端末ですぐ受験できます。端末を変えるときやブラウザのデータを
-          消したときは、購入時にお送りするメールのリンクから開き直してください
-          (30日で5回まで。それ以上でも翌月には戻ります)。
-        </p>
-        <p className="text-[12px] text-wrong mt-2 leading-relaxed">
-          シークレットウィンドウ(プライベートモード)でのご購入はお控えください。
-          ウィンドウを閉じた時点で受験権が消えてしまいます。
-        </p>
-      </div>
+        <ul className="text-[12px] text-ink-soft mt-3 leading-relaxed space-y-1">
+          <li>決済は Stripe。カード情報は当サイトに渡りません。</li>
+          <li>購入後すぐ受験できます。購入時のメールのリンクから、別の端末でも開けます。</li>
+          <li>不具合で受験できない場合は全額返金します。</li>
+        </ul>
+        {message && <p className="text-[12px] text-wrong mt-4">{message}</p>}
+      </section>
 
-      {message && <p className="text-[12px] text-wrong mt-4">{message}</p>}
+      {/* よくある質問。以前は購入ボタンの直下に赤字で書いていた注意事項(シークレット
+          ウィンドウ/30日5回/返金不可)をここに移した。買う直前に警告を3つ読ませるのは
+          ¥1,280 の判断を止めるだけで、知りたい人だけが開ける形のほうが害が小さい。 */}
+      <section className="mt-6 max-w-xl">
+        <h2 className="font-serif text-[16px] font-medium text-ink mb-2">よくある質問</h2>
+        <div className="divide-y divide-line border-y border-line">
+          <details className="group py-2.5">
+            <summary className="cursor-pointer text-[13px] text-ink list-none flex justify-between gap-3">
+              第1回を受けていなくても購入できますか？
+              <span className="text-ink-faint group-open:rotate-90 transition-transform">›</span>
+            </summary>
+            <p className="text-[12.5px] text-ink-soft leading-relaxed mt-1.5">
+              はい。第1回は無料で、いつでも受けられます。先に第1回で形式に慣れてからでも、第2回から始めても構いません。
+            </p>
+          </details>
+          <details className="group py-2.5">
+            <summary className="cursor-pointer text-[13px] text-ink list-none flex justify-between gap-3">
+              端末やブラウザを変えたら？
+              <span className="text-ink-faint group-open:rotate-90 transition-transform">›</span>
+            </summary>
+            <p className="text-[12.5px] text-ink-soft leading-relaxed mt-1.5">
+              購入時のメールのリンクから開き直せます(30日で5回まで。翌月に戻ります)。メールは消さずに残しておいてください。
+            </p>
+          </details>
+          <details className="group py-2.5">
+            <summary className="cursor-pointer text-[13px] text-ink list-none flex justify-between gap-3">
+              シークレットモードで買えますか？
+              <span className="text-ink-faint group-open:rotate-90 transition-transform">›</span>
+            </summary>
+            <p className="text-[12.5px] text-ink-soft leading-relaxed mt-1.5">
+              通常ウィンドウでの購入をお願いします。受験権がブラウザに保存されるため、シークレットウィンドウを閉じると消えてしまいます(その場合もメールのリンクから復旧できます)。
+            </p>
+          </details>
+          <details className="group py-2.5">
+            <summary className="cursor-pointer text-[13px] text-ink list-none flex justify-between gap-3">
+              何回解けますか？
+              <span className="text-ink-faint group-open:rotate-90 transition-transform">›</span>
+            </summary>
+            <p className="text-[12.5px] text-ink-soft leading-relaxed mt-1.5">
+              何回でも解き直せます。受験権は購入したブラウザに約13か月保存され、採点後の「もう一度受験する」から同じ{product.questionCount}問を何度でも通せます。印刷用の紙面も期間中いつでも開けます。
+            </p>
+          </details>
+          <details className="group py-2.5">
+            <summary className="cursor-pointer text-[13px] text-ink list-none flex justify-between gap-3">
+              返金は？
+              <span className="text-ink-faint group-open:rotate-90 transition-transform">›</span>
+            </summary>
+            <p className="text-[12.5px] text-ink-soft leading-relaxed mt-1.5">
+              商品の性質上、購入後のご都合による返金はお受けしていません。
+              解錠できない等の不具合で受験できない場合は全額返金しますので、
+              <Link href="/contact/" className="underline underline-offset-2 hover:text-ink">
+                お問い合わせ
+              </Link>
+              ください。詳しくは
+              <Link href="/legal/" className="underline underline-offset-2 hover:text-ink">
+                特定商取引法に基づく表示
+              </Link>
+              をご覧ください。
+            </p>
+          </details>
+        </div>
+      </section>
 
-      <p className="text-[12px] text-ink-faint mt-5 leading-relaxed border-t border-line pt-4">
-        まだ第1回を受けていない方は、先に
+      {/* 無料の第1回への戻し口は、ここ1か所だけ小さく残す。以前はページ冒頭と購入ボックスの
+          2か所で「まずは無料の第1回で」と送り返していて、戻ってくる仕組みが無かった。 */}
+      <p className="text-[12px] text-ink-faint mt-6 max-w-xl">
+        第1回(無料)をまだ受けていない方は
         <Link href={`/${certId}/moshi/`} className="underline underline-offset-2 hover:text-ink">
-          無料の第1回模擬試験
+          こちら
         </Link>
-        をどうぞ。同じ形式・同じ合格基準で、実力と相性を確かめてから判断できます。
+        。
       </p>
-    </section>
+    </>
   );
 }

@@ -293,13 +293,19 @@ node scripts/audit-moshi2.mjs
 
 | イベント | 意味 |
 |---|---|
-| `moshi2_offer_impression` | 購入導線カードが見えた(`place` で設置場所を区別) |
-| `moshi2_offer_click` | 購入導線カードのクリック |
-| `moshi2_checkout_start` | 「購入して受験する」を押して決済ページへ |
-| `moshi2_purchase_complete` | 決済が確認され受験権が発行された |
+| `moshi2_offer_impression` | 購入導線カードが見えた(`placement` で設置場所を区別。結果画面では `verdict`=fail/near/pass と `days_to_exam` も付く) |
+| `moshi2_offer_click` | 購入導線カードのクリック(`target`=sample はサンプルへのサブリンク) |
+| `moshi2_page_view` | 販売ページの表示。`src`=result(結果画面)/landing(資格トップ)/direct |
+| `moshi2_sample_open` | 販売ページのサンプル問題節が画面に入った |
+| `moshi2_price_view` | 販売ページの価格ボックスが画面に入った |
+| `moshi2_checkout_start` | 「購入して受験する」を押して決済ページへ(`begin_checkout` も併送・beacon) |
+| `moshi2_purchase_complete` | 決済が確認され受験権が発行された(`purchase` も併送。テストモードの決済では送らない) |
 | `moshi2_restore` | メールの受験用リンクから受験権を復旧した |
 | `moshi2_print` | 印刷用ページから印刷した(範囲・段組も記録) |
 
 `moshi_complete`(第1回の採点完了) → `moshi2_offer_impression` → `moshi2_offer_click`
-→ `moshi2_checkout_start` → `moshi2_purchase_complete` が購入ファネル。
+→ `moshi2_page_view` → `moshi2_sample_open` → `moshi2_price_view`
+→ `moshi2_checkout_start` → `moshi2_purchase_complete` が購入ファネル(2026-09-21 に中間3段を追加)。
+`src` / `days_to_exam` は GA4 のカスタム定義に登録するまでレポートで切れない
+(seo-report/register-ga4-dims.mjs)。
 どこで落ちているかを見て、価格・文面・設置場所を調整する。

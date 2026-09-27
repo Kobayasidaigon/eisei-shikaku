@@ -25,7 +25,7 @@ export default function PrivacyPage() {
         <h1 className="font-serif text-[24px] sm:text-[26px] font-medium text-ink leading-snug tracking-tight">
           プライバシーポリシー
         </h1>
-        <p className="mt-2 text-[12px] text-ink-faint tabular">制定日 2026-07-10</p>
+        <p className="mt-2 text-[12px] text-ink-faint tabular">制定日 2026-07-10 ・ 最終改訂 2026-09-22</p>
       </div>
 
       <div className="space-y-7 text-[13px] text-ink leading-relaxed">
@@ -51,6 +51,30 @@ export default function PrivacyPage() {
           <p>
             演習の受験履歴・受験者名(任意入力)は、お使いのブラウザの保存領域(localStorage)にのみ保存されます。
             当サイトのサーバーに送信・保存されることはなく、履歴の消去はサイト内の「履歴を消去」またはブラウザのデータ削除からいつでも行えます。
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-serif text-[16px] font-medium text-ink pb-1.5 border-b border-line mb-3">
+            模擬試験の「結果のまとめ・学習リマインド」でお預かりする情報
+          </h2>
+          <p>
+            模擬試験の結果画面で「結果のまとめを受け取る」に登録いただいた場合、メールアドレス・試験日(任意)・
+            その回の模擬試験の得点・判定・正答率が低かった分野・登録日時と登録時の画面をお預かりします。
+          </p>
+          <p className="mt-2">
+            利用目的は、結果のまとめのメール送付と、試験日から逆算した学習リマインド(最大6通)の送付です。
+            メールには本サイトの練習問題・模擬試験(有料の第2回を含む)と姉妹サービス「シカクモン Studio」の案内を含みます。
+            これ以外の目的には利用せず、第三者に提供しません。
+          </p>
+          <p className="mt-2">
+            保存先は姉妹サービス「シカクモン Studio」(同一運営者)のデータベース(Supabase)で、送信には Resend を利用します。
+            受験履歴(localStorage)とは別で、模擬試験の解答内容そのものは送信しません。
+            配信は各メール末尾のリンクからいつでも停止でき、登録情報の削除は
+            <Link href="/contact/" className="text-accent-ink underline underline-offset-2 mx-0.5">
+              お問い合わせ
+            </Link>
+            からご依頼ください。
           </p>
         </section>
 
