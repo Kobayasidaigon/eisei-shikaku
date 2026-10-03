@@ -309,3 +309,10 @@ node scripts/audit-moshi2.mjs
 `src` / `days_to_exam` は GA4 のカスタム定義に登録するまでレポートで切れない
 (seo-report/register-ga4-dims.mjs)。
 どこで落ちているかを見て、価格・文面・設置場所を調整する。
+
+### 同じ結果画面の Studio 枠(参考)
+
+模試の結果画面には、講座アフィリの下に シカクモン Studio の枠がある
+(`studio_cta_click`、`placement=moshi_result`・`cert`=certId)。2026-10-03 に行き先を Studio の資格別 LP
+(`/lp/eisei1`・`/lp/eisei2`)へ、文言を資格名と「登録なしで1問解ける」に変えた(CHANGELOG の 2026-10-03)。
+本番に出た日の前後で結果画面の数字(`moshi2_offer_*` を含む)を比べるときは、この変更と重なることに注意。

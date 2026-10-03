@@ -8,6 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
 import ColumnScrollPing from "@/components/ColumnScrollPing";
 import CourseAffiliateCTA from "@/components/CourseAffiliateCTA";
+import StudioLink from "@/components/StudioLink";
 
 export function generateStaticParams() {
   return COLUMNS.map((c) => ({ slug: c.slug }));
@@ -324,13 +325,14 @@ export default async function ColumnArticle({
       {/* 著者(E-E-A-T: 構造化データの Person と可視情報を一致させる) */}
       <AuthorBox className="mt-8" />
 
-      {/* 姉妹サービス: シカクモンスタジオ(記事末の二次導線。主役は上のドリルCTA、琥珀は使わない) */}
-      <a
+      {/* 姉妹サービス: シカクモンスタジオ(記事末の二次導線。主役は上のドリルCTA、琥珀は使わない)。
+          クリックを studio_cta_click(placement=column、資格のある記事は cert も)で計測 */}
+      <StudioLink
         href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=column_footer${
           (cert ?? drillCert) ? `&exam=${encodeURIComponent((cert ?? drillCert)!.name)}` : ""
         }`}
-        target="_blank"
-        rel="noopener noreferrer"
+        placement="column"
+        cert={(cert ?? drillCert)?.id}
         className="block mt-3 rounded-[12px] border border-line bg-surface p-5 transition hover:border-accent"
       >
         <div className="text-[11px] tracked text-ink-faint">姉妹サービス</div>
@@ -343,7 +345,7 @@ export default async function ColumnArticle({
         <span className="inline-block mt-3 text-[13px] text-accent">
           シカクモン Studio を無料で試す →
         </span>
-      </a>
+      </StudioLink>
     </article>
   );
 }

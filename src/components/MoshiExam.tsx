@@ -33,6 +33,7 @@ import { MOSHI_EXTRA_QUESTIONS } from "@/data/moshi-extra-questions";
 import MoshiFormatFeedback from "@/components/MoshiFormatFeedback";
 import CourseAffiliateCTA from "@/components/CourseAffiliateCTA";
 import { SITE } from "@/data/site";
+import { studioResultCopy, studioResultHref } from "@/lib/studio-cta";
 
 // 5本目の選択肢の挿入位置(全員同一の紙面になるよう問題IDから決定的に算出)
 function insertPos(id: string): number {
@@ -59,27 +60,6 @@ function formatRemaining(sec: number): string {
 }
 
 const catName = (id: string) => CATEGORIES.find((c) => c.id === id)?.name ?? id;
-
-/**
- * シカクモンスタジオへの送客リンク。資格名と弱点分野を引き継ぐ。
- *
- * 着地先(Studio)は ?exam= をお試し生成の初期値に、?theme= を作成画面の
- * 分野の初期値に使う。ここで渡さないと、せっかく模試で特定した弱点の文脈が
- * 着地先で切れてしまう(本体シカクモンの模試結果 CTA と同じ流儀)。
- *
- * utm_medium は GA4 のチャネル判定キーなので referral 固定。配置は utm_content。
- */
-function studioHref(examName: string, weakField: string | null): string {
-  const params = new URLSearchParams({
-    utm_source: "eisei",
-    utm_medium: "referral",
-    utm_content: "moshi_result",
-    exam: examName,
-  });
-  // 分野名はそのまま検索語として使われるので長すぎるものは切る
-  if (weakField) params.set("theme", weakField.slice(0, 40));
-  return `${SITE.studioUrl}?${params.toString()}`;
-}
 
 export default function MoshiExam({
   certId,
@@ -465,6 +445,8 @@ export default function MoshiExam({
     (a, b) => a[1].correct / a[1].total - b[1].correct / b[1].total,
   );
   const weakest = catsSorted.find(([, s]) => s.correct < s.total);
+  // Studio 枠の本文とリンクの文言(着地先で1問解ける資格だけ資格名と約束を出す)
+  const studioCopy = studioResultCopy(certId, cert.name);
 
   return (
     <div>
@@ -595,13 +577,14 @@ export default function MoshiExam({
       <CourseAffiliateCTA certId={certId} placement="moshi_result" className="mb-5" />
 
       {/* シカクモンスタジオ(弱点が分野名で見えた直後。講座アフィリが主役なのでこちらは
-          塗らずに bg-surface で静かに置く)。弱点分野を ?theme= で引き継ぐので、
-          着地先で入力し直さずにその分野の問題を作れる。 */}
+          塗らずに bg-surface で静かに置く)。行き先は資格別 LP(第一種・第二種とも)。
+          LP は ?theme= を読まないので弱点分野は渡さない(LP の無い資格だけトップ ?exam=&theme=)。
+          文言はドリル結果と共通(2026-10-03、lib/studio-cta.ts) */}
       <a
-        href={studioHref(cert.name, weakest ? catName(weakest[0]) : null)}
+        href={studioResultHref(certId, cert.name, "moshi_result", weakest ? catName(weakest[0]) : null)}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={() => track("studio_cta_click", { placement: "moshi_result" })}
+        onClick={() => track("studio_cta_click", { placement: "moshi_result", cert: certId })}
         className="block rounded-[10px] border border-line-strong bg-surface p-5 mb-5 transition hover:border-accent"
       >
         <div className="text-[11px] tracked text-ink-faint">関連サービス</div>
@@ -610,12 +593,8 @@ export default function MoshiExam({
             ? `「${catName(weakest[0])}」を、自分の教材で潰す`
             : "自分の教材から、弱点だけの問題集を作る"}
         </div>
-        <p className="text-[12px] text-ink-soft mt-1.5 leading-relaxed">
-          手元の教科書やノートの写真・PDFから、AIが4択問題と解説を生成。間違えた問題は忘却曲線で自動復習できます。このドリルに無い資格も学べる姉妹サービスです。
-        </p>
-        <span className="inline-block mt-3 text-[13px] text-accent">
-          シカクモン Studio を無料で試す →
-        </span>
+        <p className="text-[12px] text-ink-soft mt-1.5 leading-relaxed">{studioCopy.body}</p>
+        <span className="inline-block mt-3 text-[13px] text-accent">{studioCopy.linkLabel} →</span>
       </a>
 
       {/* 全問詳解 */}
