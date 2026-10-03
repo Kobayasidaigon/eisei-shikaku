@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SITE } from "@/data/site";
 import { QUESTIONS, CERTS, questionsOfCert } from "@/data/questions";
+import StudioLink from "@/components/StudioLink";
 
 export default function SiteFooter() {
   const certs = CERTS.filter((c) => questionsOfCert(c.id).length > 0);
@@ -39,14 +40,16 @@ export default function SiteFooter() {
         </p>
         <div className="mt-4 pt-3 border-t border-line flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-faint">
           <span>関連サービス</span>
-          <a
+          {/* クリックを studio_cta_click(placement=footer。資格のページでは cert も)で計測。
+              行き先・文言は従来どおり */}
+          <StudioLink
             href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=footer`}
-            target="_blank"
-            rel="noopener noreferrer"
+            placement="footer"
+            pathCerts={CERTS.map((c) => c.id)}
             className="hover:text-accent transition"
           >
             シカクモンスタジオ(AIで自分専用の問題集)→
-          </a>
+          </StudioLink>
         </div>
         {/* 同じ作りの姉妹ドリル。新設サイトの発見経路にもなるため、全ページに置く */}
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-faint">

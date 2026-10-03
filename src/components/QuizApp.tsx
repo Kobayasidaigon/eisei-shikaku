@@ -18,6 +18,7 @@ import {
 } from "@/data/certs";
 import { loadCertQuestions } from "@/data/question-loader";
 import CourseAffiliateCTA, { CompactCourseCTA } from "@/components/CourseAffiliateCTA";
+import { studioResultCopy, studioResultHref } from "@/lib/studio-cta";
 
 // 出題用に加工した問題（選択肢をシャッフルし、正解の位置を付け替える）
 type Prepared = {
@@ -577,7 +578,7 @@ function StartScreen({
         href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=home_card&exam=${encodeURIComponent(cert.name)}`}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={() => track("studio_cta_click", { placement: "home" })}
+        onClick={() => track("studio_cta_click", { placement: "home", cert: cert.id })}
         className="block mt-10 rounded-[12px] border border-line-strong bg-surface p-5 transition hover:border-accent"
       >
         <div className="text-[11px] tracked text-ink-faint">関連サービス</div>
@@ -804,6 +805,8 @@ function ResultScreen({
           (a, b) => a[1].correct / a[1].total - b[1].correct / b[1].total
         )[0][0]
       : null;
+  // Studio 枠の本文とリンクの文言(着地先で1問解ける資格だけ資格名と約束を出す)
+  const studioCopy = studioResultCopy(certId, certById(certId)!.name);
 
   return (
     <div className="fade-up">
@@ -909,26 +912,24 @@ function ResultScreen({
       {/* 講座アフィリ(資格別。A8提携後に affiliate.ts へリンクを設定すると点灯) */}
       <CourseAffiliateCTA certId={certId} placement="quiz_result" className="mt-6" />
 
-      {/* シカクモンスタジオへの導線(弱点が見えた直後)。
+      {/* シカクモンスタジオへの導線(弱点が見えた直後・講座アフィリより下)。
           注意: この画面の `name` は受験者が入力した氏名なので資格名には使えない。
-          資格名は certId から引く(着地先で ?exam= がお試し生成の初期値になる)。 */}
+          資格名は certId から引く。行き先は資格別 LP(第一種・第二種とも)で、
+          着地先でその資格の1問を登録なしで解けるので、文言に資格名とその約束を出す
+          (2026-10-03、lib/studio-cta.ts。MoshiExam の模試結果と共通) */}
       <a
-        href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=result_cta&exam=${encodeURIComponent(certById(certId)!.name)}`}
+        href={studioResultHref(certId, certById(certId)!.name, "result_cta", null)}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={() => track("studio_cta_click", { placement: "result" })}
+        onClick={() => track("studio_cta_click", { placement: "result", cert: certId })}
         className="block mt-6 rounded-[12px] border border-accent/40 bg-accent-wash p-5 transition hover:border-accent"
       >
         <div className="text-[11px] tracked text-accent-ink">今回の取りこぼしを忘れる前に</div>
         <div className="font-serif text-[16px] font-medium text-ink mt-1">
           間違えた分野を、自分の教材で潰す
         </div>
-        <p className="text-[12px] text-ink-soft mt-1.5 leading-relaxed">
-          手元の教科書やノートの写真・PDFから、AIが4択問題と解説を生成。間違えた問題は忘却曲線で自動復習できます。このドリルに無い資格も学べる姉妹サービスです。
-        </p>
-        <span className="inline-block mt-3 text-[13px] text-accent">
-          シカクモン Studio を無料で試す →
-        </span>
+        <p className="text-[12px] text-ink-soft mt-1.5 leading-relaxed">{studioCopy.body}</p>
+        <span className="inline-block mt-3 text-[13px] text-accent">{studioCopy.linkLabel} →</span>
       </a>
 
       {/* 操作ボタン */}
