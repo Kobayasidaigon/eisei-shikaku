@@ -71,11 +71,16 @@ export function studioResultHref(
   return `${SITE.studioUrl}?${params.toString()}`;
 }
 
-/** 結果画面の Studio 枠の本文とリンクの文言(見出しは画面ごとに持つ) */
+/**
+ * 結果画面の Studio 枠の本文とリンクの文言(見出しは画面ごとに持つ)。
+ * 約束を出す文言のアップロードの勧め方は、Studio の利用規約第4条(自分が権利を持つか適法に使える
+ * 教材に限る)と Studio の LP の書き方(「ご自身のノートや権利のある教材」)にそろえる
+ * (教科書をそのまま撮って上げさせる書き方はしない)。汎用の文言は従来の文のまま変えていない。
+ */
 export function studioResultCopy(certId: CertId, certName: string): { body: string; linkLabel: string } {
   if (STUDIO_SAMPLE_CERTS.has(certId)) {
     return {
-      body: `姉妹サービス「シカクモン Studio」では、AIが作った${certName}の問題を登録なしでその場で1問解けます(解説つき)。手元の教科書やノートの写真・PDFから4択問題を作り、間違えた問題を忘却曲線で自動復習することもできます。`,
+      body: `姉妹サービス「シカクモン Studio」では、AIが作った${certName}の問題を登録なしでその場で1問解けます(解説つき)。ご自身のノートや権利のある教材(写真・PDF)から4択問題を作り、間違えた問題を忘却曲線で自動復習することもできます。`,
       linkLabel: `${certName}の問題を登録なしで1問解いてみる`,
     };
   }
