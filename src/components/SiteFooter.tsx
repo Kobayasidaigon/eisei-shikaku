@@ -40,10 +40,12 @@ export default function SiteFooter() {
         </p>
         <div className="mt-4 pt-3 border-t border-line flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-faint">
           <span>関連サービス</span>
-          {/* クリックを studio_cta_click(placement=footer)で計測。行き先・文言は従来どおり */}
+          {/* クリックを studio_cta_click(placement=footer。資格のページでは cert も)で計測。
+              行き先・文言は従来どおり */}
           <StudioLink
             href={`${SITE.studioUrl}?utm_source=eisei&utm_medium=referral&utm_content=footer`}
             placement="footer"
+            pathCerts={CERTS.map((c) => c.id)}
             className="hover:text-accent transition"
           >
             シカクモンスタジオ(AIで自分専用の問題集)→
