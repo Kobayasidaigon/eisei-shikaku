@@ -95,7 +95,10 @@ export default async function QuestionPage({
   // 同分野の近傍問題(前後3問ずつを目安に最大6問)。論点アンカーで相互リンクする
   const start = Math.max(0, Math.min(idx - 3, total - 7));
   const siblings = questions.slice(start, start + 7).filter((x) => x.id !== q.id);
-  const relatedColumns = COLUMNS.filter((c) => c.certId === cert.id).slice(0, 3);
+  // 過去問の記事(-kakomon)を先頭に置いてから3本に絞る。第二種の600枚から eisei2-kakomon へ届くようにする
+  const relatedColumns = COLUMNS.filter((c) => c.certId === cert.id)
+    .sort((a, b) => Number(b.slug.endsWith("-kakomon")) - Number(a.slug.endsWith("-kakomon")))
+    .slice(0, 3);
 
   // Quiz スキーマは分野ページと同じ最小構成 + エンティティ結線(著者/発行者/対象国家資格/更新日)
   const jsonLd = [

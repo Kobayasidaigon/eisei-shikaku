@@ -76,6 +76,8 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
     .filter((c) => c.count > 0);
   const hasSharedCats = cats.some((c) => c.shared);
   const relatedColumns = COLUMNS.filter((c) => c.certId === cert.id);
+  // certId の無い共通記事(日程・免許申請・選び方・キャリアなど)。資格トップから辿れないと行き止まりになる
+  const commonColumns = COLUMNS.filter((c) => !c.certId);
   // 関連資格への文脈内相互リンク(第一種衛生管理者などを追加したら表示される)
   const siblingCerts = CERTS.filter((c) => c.id !== cert.id && questionsOfCert(c.id).length > 0);
   const isClusterMember = RELATED_CLUSTER.includes(cert.id);
@@ -299,6 +301,32 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {/* 第一種・第二種共通の記事(certId の無いコラム) */}
+      {commonColumns.length > 0 && (
+        <section className="mt-10">
+          <div className="flex items-baseline gap-2.5 mb-3 pb-2 border-b border-line">
+            <h2 className="font-serif text-[16px] font-medium text-ink">第一種・第二種共通の記事</h2>
+          </div>
+          <ul className="space-y-2">
+            {commonColumns.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/columns/${c.slug}/`}
+                  className="text-[13px] text-accent-ink hover:text-accent underline underline-offset-2"
+                >
+                  {c.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-[12px]">
+            <Link href="/columns/" className="text-ink-soft hover:text-accent underline underline-offset-2">
+              コラムをすべて見る →
+            </Link>
+          </p>
         </section>
       )}
 
