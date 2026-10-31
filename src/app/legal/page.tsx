@@ -7,6 +7,10 @@ import { SITE, OG_BASE } from "@/data/site";
 import { MOSHI2_PRODUCTS } from "@/data/products";
 import { MAX_REDEMPTIONS, REDEMPTION_WINDOW_DAYS } from "@/lib/redemptions";
 import { MOSHI2_CONFIG } from "@/data/moshi2-config";
+import { showsKumataro } from "@/lib/operator-name";
+
+/** 運営責任者の名前を期間で切り替えるため (lib/operator-name.ts)、1時間ごとに作り直す */
+export const revalidate = 3600;
 
 const PAGE_TITLE = "特定商取引法に基づく表示";
 const PAGE_DESC = `${SITE.name}の特定商取引法に基づく表示。販売事業者、連絡先、販売価格、支払い方法、引渡し時期、返金の扱いを記載しています。`;
@@ -55,8 +59,19 @@ export default function LegalPage() {
         </Row>
 
         <Row title="運営責任者">
-          <p>長谷川 大悟 (はせがわ だいご)</p>
-          <p className="text-[12px] text-ink-faint">「熊太郎」は活動名です。</p>
+          {showsKumataro() ? (
+            <>
+              <p>熊太郎</p>
+              <p className="text-[12px] text-ink-faint">
+                「熊太郎」は活動名です。戸籍上の氏名は、請求があれば遅滞なく開示します。
+              </p>
+            </>
+          ) : (
+            <>
+              <p>長谷川 大悟 (はせがわ だいご)</p>
+              <p className="text-[12px] text-ink-faint">「熊太郎」は活動名です。</p>
+            </>
+          )}
         </Row>
 
         <Row title="所在地・電話番号">
