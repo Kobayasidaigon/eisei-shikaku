@@ -30,6 +30,14 @@ import { certById, stampCert, type CertId, type CategoryId, type Question } from
 // 2026-10-31 に git の履歴で確認: 問題データの最終コミットは c797d63(2026-08-12)。
 export const QUESTIONS_UPDATED_AT = "2026-08-12";
 
+// 資格トップ(/eisei1/・/eisei2/)の本文(FAQ・共通記事の欄など)を最後に変えた日。本文を変えたら更新する。
+// 2026-10-31: 第一種の FAQ 2問と「第一種・第二種共通の記事」の欄を変えた。
+export const CERT_TOP_UPDATED_AT = "2026-10-31";
+// 資格トップの sitemap lastmod と WebPage の dateModified。問題データと本文の新しいほうを使う
+// (ページに出す「問題データ最終更新」は QUESTIONS_UPDATED_AT のまま)。
+export const CERT_TOP_MODIFIED =
+  CERT_TOP_UPDATED_AT > QUESTIONS_UPDATED_AT ? CERT_TOP_UPDATED_AT : QUESTIONS_UPDATED_AT;
+
 // 型・CERTS・CATEGORIES・軽量ヘルパーは certs.ts に分離(再export)。
 // サーバーコンポーネントは従来どおり "@/data/questions" から import できる。
 export * from "./certs";

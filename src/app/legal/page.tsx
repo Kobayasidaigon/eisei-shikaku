@@ -50,7 +50,7 @@ export default function LegalPage() {
         <h1 className="font-serif text-[24px] sm:text-[26px] font-medium text-ink leading-snug tracking-tight">
           特定商取引法に基づく表示
         </h1>
-        <p className="mt-2 text-[12px] text-ink-faint tabular">最終更新 2026-09-20</p>
+        <p className="mt-2 text-[12px] text-ink-faint tabular">最終更新 2026-10-31</p>
       </div>
 
       <dl className="max-w-2xl text-[13px] leading-relaxed">

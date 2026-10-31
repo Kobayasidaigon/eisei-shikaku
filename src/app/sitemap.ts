@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/data/site";
 import { COLUMNS, columnDates } from "@/data/columns";
-import { CERTS, QUESTIONS_UPDATED_AT, ownedCategoriesOfCert, questionsOf, questionsOfCert } from "@/data/questions";
+import { CERTS, CERT_TOP_MODIFIED, QUESTIONS_UPDATED_AT, ownedCategoriesOfCert, questionsOf, questionsOfCert } from "@/data/questions";
 import { MOSHI, MOSHI_UPDATED_AT } from "@/data/moshi";
 import { moshi2ProductOf } from "@/data/products";
 
@@ -18,12 +18,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // 信頼ページ(内容を更新したらこの日付も更新)。2026-10-31 に git の履歴と各ページの表示日で確認:
   // about は UPDATED=2026-07-19、privacy は 2026-09-22 改訂(e2296bc)、legal は 2026-10-31 変更(0442832)。
+  // 2026-10-31 に about の編集方針(変動する情報の載せ方)を書き直したので about も 2026-10-31。legal の表示日も 2026-10-31 にそろえた。
   const trustPagesDate = new Date("2026-07-10");
 
   const entries: MetadataRoute.Sitemap = [
     { url: `${base}/`, lastModified: newest, changeFrequency: "weekly", priority: 1 },
     { url: `${base}/columns/`, lastModified: newestColumn, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${base}/about/`, lastModified: new Date("2026-07-19"), changeFrequency: "yearly", priority: 0.3 },
+    { url: `${base}/about/`, lastModified: new Date("2026-10-31"), changeFrequency: "yearly", priority: 0.3 },
     { url: `${base}/privacy/`, lastModified: new Date("2026-09-22"), changeFrequency: "yearly", priority: 0.2 },
     { url: `${base}/contact/`, lastModified: trustPagesDate, changeFrequency: "yearly", priority: 0.2 },
     { url: `${base}/legal/`, lastModified: new Date("2026-10-31"), changeFrequency: "yearly", priority: 0.2 },
@@ -32,9 +33,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // 資格別入口ページ + 分野別一問一答ページ
   for (const cert of CERTS) {
     if (questionsOfCert(cert.id).length === 0) continue;
+    // 資格トップは問題データと本文(FAQ・共通記事の欄)の新しいほう(questions.ts の CERT_TOP_MODIFIED)
     entries.push({
       url: `${base}/${cert.id}/`,
-      lastModified: questionsDate,
+      lastModified: new Date(CERT_TOP_MODIFIED),
       changeFrequency: "weekly",
       priority: 0.9,
     });

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { COLUMNS, columnBySlug, columnDates, type Column } from "@/data/columns";
+import { COLUMNS, COMMON_COLUMN_SLUGS, columnBySlug, columnDates, type Column } from "@/data/columns";
 import { categoriesOfCert, certById, categoryName, homeCertOfCategory, questionsOf, questionsOfCert, QUESTIONS } from "@/data/questions";
 import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
 import JsonLd from "@/components/JsonLd";
@@ -88,7 +88,8 @@ export default async function ColumnArticle({
   if (!c) notFound();
   const cert = c.certId ? certById(c.certId) : undefined;
   const count = c.certId ? questionsOfCert(c.certId).length : 0;
-  const kicker = cert?.name ?? c.kicker ?? "コラム";
+  // 内容が第一種・第二種で共通の記事は、certId(eisei2)の資格名ではなく「第一種・第二種共通」と出す
+  const kicker = COMMON_COLUMN_SLUGS.includes(c.slug) ? "第一種・第二種共通" : (cert?.name ?? c.kicker ?? "コラム");
   const url = absUrl(`/columns/${c.slug}/`);
   const { published, modified } = columnDates(c);
   const related = relatedColumns(c);

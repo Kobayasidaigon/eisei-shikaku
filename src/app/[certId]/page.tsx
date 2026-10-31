@@ -5,7 +5,7 @@ import QuizApp from "@/components/QuizApp";
 import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
 import { SITE, AUTHOR, OG_BASE, absUrl } from "@/data/site";
-import { COLUMNS } from "@/data/columns";
+import { COLUMNS, COMMON_COLUMN_SLUGS } from "@/data/columns";
 import { moshiDefFor } from "@/data/moshi";
 import { moshi2ProductOf } from "@/data/products";
 import Moshi2TopCard from "@/components/Moshi2TopCard";
@@ -18,6 +18,7 @@ import {
   questionsOfCert,
   quizCountsFor,
   QUESTIONS_UPDATED_AT,
+  CERT_TOP_MODIFIED,
   type CertId,
 } from "@/data/questions";
 
@@ -76,8 +77,12 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
     .filter((c) => c.count > 0);
   const hasSharedCats = cats.some((c) => c.shared);
   const relatedColumns = COLUMNS.filter((c) => c.certId === cert.id);
-  // certId の無い共通記事(日程・免許申請・選び方・キャリアなど)。資格トップから辿れないと行き止まりになる
-  const commonColumns = COLUMNS.filter((c) => !c.certId);
+  // 共通記事: certId の無い記事(日程・免許申請・選び方・キャリアなど)と、certId は eisei2 だが内容が共通の記事
+  // (COMMON_COLUMN_SLUGS)。後者が /eisei1/ から辿れないと、第一種の受験者に受験資格・受験料の入口が無くなる。
+  // 上の「関連記事」に出たものは除いて重複させない(/eisei2/ では4本とも関連記事の側に出る)。
+  const commonColumns = COLUMNS.filter(
+    (c) => (!c.certId || COMMON_COLUMN_SLUGS.includes(c.slug)) && !relatedColumns.includes(c),
+  );
   // 関連資格への文脈内相互リンク(第一種衛生管理者などを追加したら表示される)
   const siblingCerts = CERTS.filter((c) => c.id !== cert.id && questionsOfCert(c.id).length > 0);
   const isClusterMember = RELATED_CLUSTER.includes(cert.id);
@@ -107,7 +112,7 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
       inLanguage: "ja",
       isPartOf: { "@id": absUrl("/#website") },
       about: credential,
-      dateModified: QUESTIONS_UPDATED_AT,
+      dateModified: CERT_TOP_MODIFIED,
       author: { "@id": absUrl("/#author") },
       publisher: { "@id": absUrl("/#organization") },
     },

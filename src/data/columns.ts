@@ -41,6 +41,15 @@ export type Column = {
 // 既存コラムの一括公開日(git履歴上の実際の追加日)。個別に上書き可。
 export const COLUMN_DEFAULT_DATE = "2026-07-16";
 
+// certId は eisei2 だが、内容が第一種・第二種で共通の記事(受験資格・受験料と申込方法・違いの比較・計算問題)。
+// 資格トップ(/eisei1/)の「第一種・第二種共通の記事」の欄に出し、記事の見出し上のラベルも「第一種・第二種共通」にする。
+export const COMMON_COLUMN_SLUGS: string[] = [
+  "eisei2-jyuken-shikaku",
+  "eisei2-nittei",
+  "eisei2-daiisshu-hikaku",
+  "eisei-keisan",
+];
+
 export function columnDates(c: Column): { published: string; modified: string } {
   const published = c.publishedAt ?? COLUMN_DEFAULT_DATE;
   return { published, modified: c.updatedAt ?? published };
@@ -142,7 +151,7 @@ const CURATED_COLUMNS: Column[] = [
       },
       {
         heading: "過去問は何周すべきか、いつから手をつけるか",
-        body: "目安は3周です。1周目は解説を読みながら出題形式に慣れ、2周目は自力で解いて間違いに印をつけ、3周目は印のついた問題だけを時間を計って解き直します。開始時期は、勉強時間の目安100〜150時間のうち最後の3〜4週間を過去問と模擬試験に充てるイメージで逆算するのがおすすめです。試験日の1か月前から過去問中心に切り替え、直前1週間は模擬試験で科目別の到達度を最終確認する、という配分で仕上げてください。具体的な回し方は次のとおりです。",
+        body: "目安は3周です。1周目は解説を読みながら出題形式に慣れ、2周目は自力で解いて間違いに印をつけ、3周目は印のついた問題だけを時間を計って解き直します。開始時期は、当サイトの勉強時間の目安(100〜150時間)のうち最後の3〜4週間を過去問と模擬試験に充てるイメージで逆算するのがおすすめです。試験日の1か月前から過去問中心に切り替え、直前1週間は模擬試験で科目別の到達度を最終確認する、という配分で仕上げてください。具体的な回し方は次のとおりです。",
       },
       {
         heading: "公表問題と練習問題の回し方",

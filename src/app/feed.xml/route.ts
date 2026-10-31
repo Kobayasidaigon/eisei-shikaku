@@ -25,10 +25,13 @@ function toPubDate(iso: string): string {
 }
 
 export async function GET() {
-  // 更新日(なければ公開日)の新しい順に20件
+  // 更新日(なければ公開日)の新しい順に20件。更新日が同じなら公開日の新しい順
+  // (同じ日に多くの記事を更新すると、配列の末尾にある新規記事が20件から落ちていたため)
   const columns = [...COLUMNS]
-    .sort((a, b) =>
-      columnDates(b).modified.localeCompare(columnDates(a).modified)
+    .sort(
+      (a, b) =>
+        columnDates(b).modified.localeCompare(columnDates(a).modified) ||
+        columnDates(b).published.localeCompare(columnDates(a).published)
     )
     .slice(0, 20);
 
