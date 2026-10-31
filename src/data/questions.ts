@@ -27,7 +27,8 @@ import { certById, stampCert, type CertId, type CategoryId, type Question } from
 
 // 問題データの最終更新日(sitemap の lastmod に使用)。
 // 問題の追加・修正・解説の書き直しをしたら必ずこの日付を更新すること。
-export const QUESTIONS_UPDATED_AT = "2026-08-02";
+// 2026-10-31 に git の履歴で確認: 問題データの最終コミットは c797d63(2026-08-12)。
+export const QUESTIONS_UPDATED_AT = "2026-08-12";
 
 // 型・CERTS・CATEGORIES・軽量ヘルパーは certs.ts に分離(再export)。
 // サーバーコンポーネントは従来どおり "@/data/questions" から import できる。

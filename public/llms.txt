@@ -13,7 +13,7 @@
 
 - 合計1,000問のオリジナル練習問題（全問解説つき・分野別）
 - 本試験と同じ構成の無料模擬試験: 第一種44問3時間・第二種30問3時間（科目別合格基準・自動採点つき）
-- コラム記事（過去問の入手先・難易度・勉強法・特例第一種など）
+- コラム記事（過去問の入手先・合格率・試験日程と申込方法・受験資格・勉強時間・計算問題・合格後の免許申請・特例第一種など）
 
 ## リンク
 
@@ -26,18 +26,27 @@
 
 ## よくある質問に答える記事
 
-- 第一種衛生管理者の過去問はどこで手に入る: https://eisei.shikakumon.com/columns/eisei1-kakomon/
-- 第二種衛生管理者の過去問の使い方: https://eisei.shikakumon.com/columns/eisei2-kakomon/
+- 第一種衛生管理者の過去問（公式の公表試験問題・年2回44問）と使い方: https://eisei.shikakumon.com/columns/eisei1-kakomon/
+- 第二種衛生管理者の過去問（公式の公表試験問題・年2回30問）と使い方: https://eisei.shikakumon.com/columns/eisei2-kakomon/
+- 第一種衛生管理者の合格率（令和7年度46.8%）: https://eisei.shikakumon.com/columns/eisei1-nanido/
+- 第二種衛生管理者の合格率（令和7年度48.7%）: https://eisei.shikakumon.com/columns/eisei2-nanido/
+- 第一種と第二種衛生管理者の違い: https://eisei.shikakumon.com/columns/eisei2-daiisshu-hikaku/
+- 第一種と第二種どちらを受けるべきか（判断の流れ）: https://eisei.shikakumon.com/columns/eisei-dochira/
 - 特例第一種衛生管理者とは（二種から一種へ）: https://eisei.shikakumon.com/columns/eisei1-tokurei/
-- 第一種衛生管理者の難易度と合格率: https://eisei.shikakumon.com/columns/eisei1-nanido/
-- 第二種衛生管理者の難易度: https://eisei.shikakumon.com/columns/eisei2-nanido/
-- 第一種と第二種どちらを受けるべきか: https://eisei.shikakumon.com/columns/eisei2-daiisshu-hikaku/
+- 衛生管理者の受験資格（第一種・第二種共通）: https://eisei.shikakumon.com/columns/eisei2-jyuken-shikaku/
+- 衛生管理者の試験日程（全国7センター・申込み〜合格発表）: https://eisei.shikakumon.com/columns/eisei-nittei/
+- 衛生管理者の受験料と申込方法: https://eisei.shikakumon.com/columns/eisei2-nittei/
+- 第一種衛生管理者の勉強時間と勉強法: https://eisei.shikakumon.com/columns/eisei1-benkyouhou/
+- 第二種衛生管理者の勉強時間と勉強法: https://eisei.shikakumon.com/columns/eisei2-benkyou/
+- 衛生管理者の計算問題（必要換気量・換気回数・気積・有所見率・BMI）: https://eisei.shikakumon.com/columns/eisei-keisan/
+- 衛生管理者の免許申請（合格後の手続き）: https://eisei.shikakumon.com/columns/eisei-menkyo-shinsei/
 
 ## 姉妹サイト
 
-- シカクモン（法務・ビジネス系10資格）: https://shikakumon.com/
-- 設備資格ドリル（電験三種・電工など9資格）: https://setsubi.shikakumon.com/
-- 筋トレ資格ドリル: https://kintore.shikakumon.com/
+- シカクモン（27資格・5,672問）: https://shikakumon.com/
+- 設備資格ドリル（電験三種・電工・ビル管理士など16試験・2,828問）: https://setsubi.shikakumon.com/
+- 筋トレ資格ドリル（7資格・1,101問）: https://kintore.shikakumon.com/
+- 施工管理ドリル（施工管理技士 第一次検定・技術士第一次試験、13試験・2,635問）: https://sekokan.shikakumon.com/
 
 ## 運営
 
