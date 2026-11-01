@@ -7,7 +7,7 @@ import { QUESTIONS } from "@/data/questions";
 const PAGE_TITLE = "運営者情報・編集方針";
 const PAGE_DESC = `${SITE.name}の運営者(${AUTHOR.jobTitle}・${AUTHOR.name})と、問題作成・ファクトチェックの編集方針について。`;
 // 信頼中核ページの最終更新日(内容を書き直したら更新する)
-const UPDATED = "2026-07-19";
+const UPDATED = "2026-10-31";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -86,7 +86,7 @@ export default function AboutPage() {
           {[
             "問題と解説は、公式の出題範囲と一般的な労働衛生の知識(関係法令・労働衛生・労働生理、および有害業務に係る法令・労働衛生)にもとづいて作成し、公開前に全問の構造チェックと独立したファクトチェックを通しています。",
             "本サイトの問題は各試験の公式過去問ではありません。出題分野に沿った対策演習として作成しています。",
-            "受験資格・受験料・試験日程・合格率などの変動する情報は断定せず、必ず各団体の公式サイトの確認を案内しています。",
+            "受験資格・受験料・試験日程・合格率などの変動する情報は、公式の案内をもとに年度や確認日、出典を添えて載せ、最新の情報は各団体の公式サイトで確認するよう案内しています。",
             "誤りの指摘は歓迎します。確認のうえ、事実に基づいて速やかに修正します。",
           ].map((t, i) => (
             <li key={i} className="relative pl-4 text-[13px] text-ink leading-relaxed">

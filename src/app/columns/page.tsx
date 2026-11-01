@@ -6,9 +6,9 @@ import { SITE, OG_BASE, absUrl } from "@/data/site";
 import JsonLd from "@/components/JsonLd";
 
 // タイトルのブランド名は layout の title.template が付与する
-const PAGE_TITLE = "資格コラム";
+const PAGE_TITLE = "衛生管理者のコラム一覧｜過去問・合格率・日程・受験資格";
 const PAGE_DESC =
-  "第一種・第二種衛生管理者の概要・難易度・受験資格・勉強法と、このドリルでの対策をまとめた資格ガイドコラム。";
+  "第一種・第二種衛生管理者の過去問の入手先、合格率、試験日程と申込方法、受験資格、勉強時間、計算問題、合格後の免許申請までをまとめたコラムの一覧。";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -72,7 +72,7 @@ export default function ColumnsPage() {
 
       <div className="mb-7 border-l-2 border-accent pl-3.5">
         <h1 className="font-serif text-[24px] sm:text-[26px] font-medium text-ink leading-snug tracking-tight">
-          資格コラム
+          衛生管理者のコラム一覧
         </h1>
         <p className="mt-2 text-[13px] text-ink-soft leading-relaxed max-w-xl">
           各資格の概要・難易度・受験資格・勉強法と、このドリルでの対策をまとめています。受験を考えている人の最初の1歩に。
