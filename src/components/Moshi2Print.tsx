@@ -215,7 +215,7 @@ export default function Moshi2Print({ certId }: { certId: CertId }) {
           </p>
           <p>{def.specNote}</p>
           <p>
-            作成・監修: {AUTHOR.name}({AUTHOR.jobTitle})／{SITE.url}
+            作成: {SITE.name}(運営 {AUTHOR.name}・下書きに AI を使用)／{SITE.url}
           </p>
           <p>
             この紙面は購入者ご本人の学習用です。複製・再配布・転売はご遠慮ください。
