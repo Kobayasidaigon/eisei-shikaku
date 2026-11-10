@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AUTHOR } from "@/data/site";
 
-// 著者(編集部)ボックス。構造化データの Person(@id=/#author) と可視情報を一致させる
+// 著者(運営者)ボックス。構造化データの Person(@id=/#author) と可視情報を一致させる
 // E-E-A-T パーツ。資格入口・分野別一問一答・コラム詳細で共用する。
 export default function AuthorBox({ className = "" }: { className?: string }) {
   return (

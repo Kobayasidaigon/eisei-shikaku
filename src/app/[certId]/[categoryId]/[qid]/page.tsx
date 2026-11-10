@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import JsonLd from "@/components/JsonLd";
 import AuthorBox from "@/components/AuthorBox";
 import { CompactCourseCTA } from "@/components/CourseAffiliateCTA";
-import { AUTHOR, OG_BASE, absUrl } from "@/data/site";
+import { OG_BASE, absUrl } from "@/data/site";
 import { COLUMNS } from "@/data/columns";
 import { topicOf } from "@/data/topics";
 import {
@@ -170,7 +170,7 @@ export default async function QuestionPage({
         </h1>
         <p className="mt-2 text-[13px] text-ink-soft leading-relaxed max-w-xl">
           {cert.name}「{catName}」の練習問題 問{n}(全{total}問)。正解と解説つき。
-          {AUTHOR.name}が作成し、独立した検証を経て公開しています。4択の演習モードで解きたい方は
+          問題と解説は AI で下書きして作っています(作り方は運営者情報に書いています)。4択の演習モードで解きたい方は
           <Link href={`/${cert.id}/`} className="text-accent-ink underline underline-offset-2 mx-0.5">
             {cert.name}のドリル
           </Link>

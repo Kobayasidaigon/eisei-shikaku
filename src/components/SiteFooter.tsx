@@ -30,7 +30,7 @@ export default function SiteFooter() {
             全 {QUESTIONS.length} 問 ・ {CERTS.length}試験に対応
           </span>
           <Link href="/about/" className="text-ink-faint hover:text-accent transition">
-            編集部が作成・問題は随時更新
+            運営者と問題の作り方
           </Link>
         </div>
         <p className="mt-3 text-ink-faint leading-relaxed">
