@@ -21,6 +21,7 @@ import {
   CERT_TOP_MODIFIED,
   type CertId,
 } from "@/data/questions";
+import { buildOx } from "@/data/ichimon";
 
 // 関連資格クラスタ。第一種・第二種は3科目が共通で受験者が比較検討するため、
 // 本文にクラスタ語を供給して相互リンクさせる。
@@ -178,6 +179,21 @@ export default async function CertPage({ params }: { params: Promise<{ certId: s
         )}
         <p className="mt-1 text-[11px] text-ink-faint tabular">問題データ最終更新 {QUESTIONS_UPDATED_AT}</p>
       </div>
+
+      {/* 一問一答(○×)への導線。2026-11-23 追加 */}
+      {buildOx(cert.id).ox.length >= 20 && (
+        <div className="mb-4 bg-surface border border-line rounded-[10px] p-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[13px] text-ink-soft leading-relaxed">
+            スキマ時間に、選択肢を1つずつ○×で答える一問一答（{buildOx(cert.id).ox.length}問）。
+          </p>
+          <Link
+            href={`/${cert.id}/ichimon/`}
+            className="border border-line rounded-[8px] px-4 py-2 text-[13px] text-ink hover:bg-paper transition-colors shrink-0"
+          >
+            一問一答（○×）→
+          </Link>
+        </div>
+      )}
 
       {/* 模擬試験への導線(模試定義がある試験のみ) */}
       {moshiDefFor(cert.id) && (
