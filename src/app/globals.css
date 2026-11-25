@@ -10,7 +10,7 @@
   --color-surface: #fffdf9; /* カード面。ほんのり温かい白 */
   --color-ink: #211f1b; /* 純黒でない濃インク */
   --color-ink-soft: #6b665c;
-  --color-ink-faint: #9c968a;
+  --color-ink-faint: #716b61; /* paper に対して約4.6:1、surface に対して約5.2:1(文字のコントラスト基準 4.5:1 以上) */
 
   --color-line: #e3ded1; /* 影の代わりに使う基本の罫線 */
   --color-line-strong: #cdc6b5;

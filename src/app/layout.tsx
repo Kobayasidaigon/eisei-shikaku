@@ -113,6 +113,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "if(location.hostname==='eisei-shikaku.vercel.app'){location.replace('https://eisei.shikakumon.com'+location.pathname+location.search+location.hash)}",
           }}
         />
+        {/* GA4 の初期化(window.gtag と dataLayer の定義)だけは head で同期実行する。
+            lazyOnload にすると load+アイドル待ちまで window.gtag が無く、その間の
+            course_click / cta_impression / quiz_start などが gtag?.() で捨てられていた。
+            ここで定義しておけば、gtag.js 読込前のイベントも dataLayer に溜まり、読込後に送られる。 */}
+        {SITE.gaId && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',${JSON.stringify(SITE.gaId)});`,
+            }}
+          />
+        )}
       </head>
       <body>
         <JsonLd data={siteJsonLd} />
@@ -124,20 +135,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Analytics />
         {/* GA4: @next/third-parties は gtag.js を preload して初期帯域を先取りするため、
             lazyOnload の手動読込に変更(SPA遷移のPVはGA4の拡張計測「履歴の変更」が拾う)。
-            SITE.gaId が空(本番のGA4プロパティ未発行)の間はタグを一切描画しない。 */}
+            SITE.gaId が空(本番のGA4プロパティ未発行)の間はタグを一切描画しない。
+            初期化(gtag/dataLayer の定義)は <head> の inline script で行う。 */}
         {SITE.gaId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`}
-              strategy="lazyOnload"
-            />
-            <Script id="ga4-init" strategy="lazyOnload">
-              {`window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${SITE.gaId}');`}
-            </Script>
-          </>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${SITE.gaId}`}
+            strategy="lazyOnload"
+          />
         )}
       </body>
     </html>
