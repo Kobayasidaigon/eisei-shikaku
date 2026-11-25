@@ -44,7 +44,8 @@ function prepare(questions: Question[]): Prepared[] {
   });
 }
 
-// GA4 イベント計測。gtag は layout で lazyOnload 読込のため、未ロード時は何もしない。
+// GA4 イベント計測。window.gtag は layout の <head> で同期定義されるため、gtag.js の
+// 読込前に呼んでも dataLayer に溜まり、読込後に送られる。
 // 演習開始/完了/外部CTAクリックを資格別に測り、流入→演習→換金の転換率を見る。
 function track(name: string, params?: Record<string, unknown>) {
   if (typeof window === "undefined") return;
@@ -625,16 +626,25 @@ function QuizScreen({
 
   // 解説を読み進めて下スクロールした位置のまま次問へ進む(または開始時にヒーローの
   // 下に設問が隠れる)と設問が画面外になるため、問題の切り替わりごとに設問先頭へ戻す。
-  // key={idx} で問題ごとに再マウントされるので、マウント時に一度だけ実行される。
+  // key={idx} は下の div を作り直すだけで QuizScreen 自体は再マウントされないため、idx を依存に取る。
+  // あわせて設問にフォーカスを移す(押した「次の問題へ」ボタンが消えて body に落ちるのを防ぐ)。
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const questionRef = useRef<HTMLParagraphElement | null>(null);
+  const nextRef = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
+    questionRef.current?.focus({ preventScroll: true });
     const el = rootRef.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top;
     // 設問の先頭がすでに画面内(上端〜1/3)にあるときは動かさない(無駄な揺れ防止)
     if (top >= 0 && top < window.innerHeight / 3) return;
     el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
+  }, [idx]);
+
+  // 解答すると「解答する」ボタンが消えるので、フォーカスを「次の問題へ／結果を見る」へ移す
+  useEffect(() => {
+    if (revealed) nextRef.current?.focus();
+  }, [revealed]);
 
   return (
     <div className="fade-up scroll-mt-16" key={idx} ref={rootRef}>
@@ -657,7 +667,11 @@ function QuizScreen({
         <div className="text-[11px] tracked text-ink-faint mb-2.5">
           {categoryName(cur.base.category)}
         </div>
-        <p className="font-serif text-[19px] sm:text-[21px] font-medium text-ink leading-relaxed">
+        <p
+          ref={questionRef}
+          tabIndex={-1}
+          className="font-serif text-[19px] sm:text-[21px] font-medium text-ink leading-relaxed outline-none"
+        >
           {cur.base.q}
         </p>
       </div>
@@ -690,6 +704,7 @@ function QuizScreen({
               key={i}
               onClick={() => onChoose(i)}
               disabled={revealed}
+              aria-pressed={picked === i}
               className={`w-full text-left rounded-[10px] border px-4 py-3 transition flex items-center gap-3 ${box} ${
                 revealed ? "cursor-default" : "cursor-pointer"
               }`}
@@ -716,11 +731,12 @@ function QuizScreen({
         </button>
       )}
 
-      {/* 解説＋次へ */}
-      {revealed && (
-        <div className="fade-up mt-5">
+      {/* 解説＋次へ。role="status" の枠は常に置き、正誤と解説が入った時点で読み上げさせる
+          (枠ごと後から挿入すると読み上げない支援技術があるため) */}
+      <div role="status">
+        {revealed && (
           <div
-            className={`rounded-[10px] border p-4 ${
+            className={`fade-up mt-5 rounded-[10px] border p-4 ${
               isCorrect ? "border-correct/40 bg-correct-wash" : "border-wrong/40 bg-wrong-wash"
             }`}
           >
@@ -733,7 +749,12 @@ function QuizScreen({
             </div>
             <p className="text-[13px] text-ink leading-relaxed">{cur.base.explain}</p>
           </div>
+        )}
+      </div>
+      {revealed && (
+        <div className="fade-up">
           <button
+            ref={nextRef}
             onClick={onNext}
             className="mt-4 w-full rounded-[8px] bg-accent text-white text-[15px] font-medium py-3.5 transition hover:bg-accent-ink"
           >

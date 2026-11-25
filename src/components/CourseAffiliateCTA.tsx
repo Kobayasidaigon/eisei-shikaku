@@ -143,7 +143,7 @@ export default function CourseAffiliateCTA({
       {/* 有料講座の第2候補(SMART)。カードは増やさず1行で添える */}
       {paidSub && (
         <p className="mt-2 text-[12px] text-ink-soft leading-relaxed">
-          <span className="text-[10px] text-ink-faint mr-1.5">【PR】</span>
+          <span className="text-[11px] text-ink-faint mr-1.5">【PR】</span>
           スマホ完結で安く済ませたい方は
           <a
             href={paidSub.href}
@@ -197,7 +197,7 @@ export function CompactCourseCTA({
       >
         <div className="text-[13px] text-ink leading-relaxed">
           {lead}
-          <span className="text-[10px] text-ink-faint ml-1.5">【PR】</span>
+          <span className="text-[11px] text-ink-faint ml-1.5">【PR】</span>
         </div>
         <span className="inline-block mt-1 text-[13px] text-accent font-medium">
           {target.label} →
@@ -205,7 +205,7 @@ export function CompactCourseCTA({
       </a>
       {free && (
         <p className="mt-1.5 px-1 text-[12px] text-ink-soft leading-relaxed">
-          <span className="text-[10px] text-ink-faint mr-1.5">【PR】</span>
+          <span className="text-[11px] text-ink-faint mr-1.5">【PR】</span>
           まず講義を無料で試すなら
           <a
             href={free.href}
